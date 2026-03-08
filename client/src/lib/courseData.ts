@@ -220,9 +220,28 @@ const chapter1Topics: Topic[] = [
         content: 'Add (1011)₂ + (0110)₂\n\n     carry: 1 1 1 0\n            1 0 1 1\n          + 0 1 1 0\n          ---------\n\nColumn by column (right to left):\n  Col 0 (2⁰): 1 + 0 = 1          → write 1, carry 0\n  Col 1 (2¹): 1 + 1 = 10         → write 0, carry 1\n  Col 2 (2²): 0 + 1 + 1(carry) = 10 → write 0, carry 1\n  Col 3 (2³): 1 + 0 + 1(carry) = 10 → write 0, carry 1\n  Col 4 (2⁴): 0 + 0 + 1(carry) = 1  → write 1\n\nResult: (10001)₂\n\nVerify: 11 + 6 = 17 = 16 + 1 = (10001)₂ ✓',
       },
       {
+        type: 'text',
+        content: '**PART 5: Binary Multiplication**\n\nBinary multiplication works exactly like long multiplication in decimal, but is much simpler because the only digits are 0 and 1. The two rules are:\n\n  Any number × 0 = 0\n  Any number × 1 = that number unchanged\n\nSo each partial product is either all zeros (if the multiplier bit is 0) or a copy of the multiplicand (if the multiplier bit is 1), shifted left by the appropriate number of positions. Then all partial products are added together.',
+      },
+      {
+        type: 'example',
+        title: 'Example 5: Binary Multiplication (Integer)',
+        content: 'Multiply (1011)\u2082 \u00d7 (101)\u2082\n\nStep 1 \u2014 Write out partial products (one per bit of the multiplier, from right to left):\n\n  Multiplier bit 0 (= 1): 1011 \u00d7 1 = 1011, shifted 0 places  →  0001011\n  Multiplier bit 1 (= 0): 1011 \u00d7 0 = 0000, shifted 1 place   →  0000000\n  Multiplier bit 2 (= 1): 1011 \u00d7 1 = 1011, shifted 2 places  →  0101100\n\nStep 2 \u2014 Add all partial products:\n\n       0 0 0 1 0 1 1\n       0 0 0 0 0 0 0\n     + 0 1 0 1 1 0 0\n     ---------------\n       0 1 1 0 1 1 1\n\nResult: (110111)\u2082\n\nVerify: 11 \u00d7 5 = 55 = 32 + 16 + 4 + 2 + 1 = (110111)\u2082 \u2713',
+      },
+      {
+        type: 'example',
+        title: 'Example 6: Binary Multiplication (with Fractions)',
+        content: 'Multiply (1.1)\u2082 \u00d7 (10.1)\u2082\n\nFirst, note the total number of binary decimal places: 1 + 1 = 2 places total.\nIgnore the binary point and multiply as integers:\n  (11)\u2082 \u00d7 (101)\u2082\n\n  Partial products:\n    11 \u00d7 1 (bit 0) = 011, shift 0  →  00011\n    11 \u00d7 0 (bit 1) = 000, shift 1  →  00000\n    11 \u00d7 1 (bit 2) = 011, shift 2  →  01100\n\n  Sum: 00011 + 00000 + 01100 = 01111 = (1111)\u2082\n\nNow place the binary point 2 places from the right: (11.11)\u2082\n\nVerify: 1.5 \u00d7 2.5 = 3.75 = 2 + 1 + 0.5 + 0.25 = (11.11)\u2082 \u2713',
+      },
+      {
+        type: 'warning',
+        title: 'Key rule for binary point in multiplication',
+        content: 'When multiplying two binary numbers with fractional parts:\n  Total binary decimal places in result = (decimal places in first number) + (decimal places in second number)\n\nThis is identical to the rule for decimal multiplication:\n  1.5 \u00d7 2.5: 1 decimal place + 1 decimal place = 2 decimal places in result (3.75)\n  (1.1)\u2082 \u00d7 (10.1)\u2082: 1 binary place + 1 binary place = 2 binary places in result (11.11)\u2082',
+      },
+      {
         type: 'highlight',
         title: 'Quick Reference Summary',
-        content: 'Binary → Decimal: Multiply each bit by its power of 2, sum all the 1-bits.\nInteger → Binary: Divide by 2 repeatedly, collect remainders, read BOTTOM TO TOP.\nFraction → Binary: Multiply by 2 repeatedly, collect integer parts, read TOP TO BOTTOM.\nBinary addition: Column by column right to left; carry when sum ≥ 2.',
+        content: 'Binary \u2192 Decimal: Multiply each bit by its power of 2, sum all the 1-bits.\nInteger \u2192 Binary: Divide by 2 repeatedly, collect remainders, read BOTTOM TO TOP.\nFraction \u2192 Binary: Multiply by 2 repeatedly, collect integer parts, read TOP TO BOTTOM.\nBinary addition: Column by column right to left; carry when sum \u2265 2.\nBinary multiplication: Partial products (shift-and-add); each partial product is 0 or a shifted copy of the multiplicand. Count binary decimal places: result places = sum of both operands\u2019 places.',
       },
     ],
     quiz: [
