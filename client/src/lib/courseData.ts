@@ -289,6 +289,59 @@ const chapter1Topics: Topic[] = [
         description: 'The relative error of representing any real number x in floating point is bounded by machine epsilon.',
         isKey: true,
       },
+      {
+        id: 'fp-overflow-threshold',
+        title: 'Overflow Threshold (IEEE 754 Double)',
+        latex: '\\Omega = (2 - 2^{-(p-1)}) \\times 2^{e_{\\max}} \\approx 1.8 \\times 10^{308}',
+        description: 'Any computation producing a result larger than Ω overflows to ±Inf. For IEEE double: e_max = 1023, p = 53.',
+        isKey: true,
+      },
+      {
+        id: 'fp-underflow-threshold',
+        title: 'Underflow Threshold — Smallest Normal Number (IEEE 754 Double)',
+        latex: '\\lambda = 2^{e_{\\min}} = 2^{-1022} \\approx 2.2 \\times 10^{-308}',
+        description: 'Any result smaller in magnitude than λ cannot be represented as a normalized number. It either underflows to a subnormal or flushes to zero.',
+        isKey: true,
+      },
+      {
+        id: 'fp-subnormal-threshold',
+        title: 'Smallest Subnormal Number (IEEE 754 Double)',
+        latex: '\\lambda_{\\text{sub}} = 2^{1-\\text{bias}-(p-1)} = 2^{-1074} \\approx 5.0 \\times 10^{-324}',
+        description: 'The smallest positive number representable in IEEE 754 double precision (a subnormal). Below this, the result flushes to zero (hard underflow).',
+      },
+      {
+        id: 'bin-add-rules',
+        title: 'Binary Addition Rules (Cheatsheet)',
+        latex: '0+0=0 \\quad 0+1=1 \\quad 1+0=1 \\quad 1+1=10_{\\,2} \\quad 1+1+1=11_{\\,2}',
+        description: 'The five cases of single-bit addition (including carry-in). When the sum is 2 (= 10₂), write 0 and carry 1. When the sum is 3 (= 11₂), write 1 and carry 1.',
+        isKey: true,
+      },
+      {
+        id: 'bin-powers',
+        title: 'Powers of 2 Reference (Cheatsheet)',
+        latex: '2^0=1,\\; 2^1=2,\\; 2^2=4,\\; 2^3=8,\\; 2^4=16,\\; 2^5=32,\\; 2^6=64,\\; 2^7=128,\\; 2^8=256,\\; 2^9=512,\\; 2^{10}=1024',
+        description: 'Memorise these to quickly convert between binary and decimal. For fractions: 2⁻¹=0.5, 2⁻²=0.25, 2⁻³=0.125, 2⁻⁴=0.0625, 2⁻⁵=0.03125.',
+        isKey: true,
+      },
+      {
+        id: 'bin-neg-powers',
+        title: 'Negative Powers of 2 Reference (Cheatsheet)',
+        latex: '2^{-1}=0.5,\\; 2^{-2}=0.25,\\; 2^{-3}=0.125,\\; 2^{-4}=0.0625,\\; 2^{-5}=0.03125,\\; 2^{-6}=0.015625',
+        description: 'Essential for converting binary fractions to decimal. Each step right of the binary point halves the value.',
+        isKey: true,
+      },
+      {
+        id: 'bin-common-sums',
+        title: 'Common Binary Sums (Cheatsheet)',
+        latex: '(1111)_2 = 15,\\quad (10000)_2 = 16,\\quad (11111)_2 = 31,\\quad (100000)_2 = 32',
+        description: 'A string of n ones in binary equals 2ⁿ − 1. Adding 1 to a string of all ones produces a 1 followed by n zeros (carry cascade). Useful for spotting patterns quickly.',
+      },
+      {
+        id: 'bin-subtraction-complement',
+        title: 'Binary Subtraction via Two\'s Complement',
+        latex: 'A - B = A + (\\overline{B} + 1) \\pmod{2^n}',
+        description: 'To subtract B from A: flip all bits of B (one\'s complement), add 1 to get two\'s complement, then add to A. Any carry out of the MSB is discarded. This is how computers perform subtraction.',
+      },
     ],
     content: [
       {
@@ -298,6 +351,26 @@ const chapter1Topics: Topic[] = [
       {
         type: 'text',
         content: '**Special Values in IEEE 754**\n\n- **Exponent all zeros, fraction all zeros**: ±0\n- **Exponent all zeros, fraction nonzero**: Subnormal numbers (gradual underflow)\n- **Exponent all ones, fraction all zeros**: ±Inf (overflow)\n- **Exponent all ones, fraction nonzero**: NaN (Not a Number, e.g., 0/0, √(-1))',
+      },
+      {
+        type: 'highlight',
+        title: 'Overflow — What it is and when it happens',
+        content: 'OVERFLOW occurs when a computation produces a result whose MAGNITUDE IS TOO LARGE to be stored as a finite floating point number.\n\nThe overflow threshold for IEEE 754 double precision is:\n  Ω ≈ 1.8 × 10³⁰⁸\n\nWhen a result exceeds Ω, the floating point system returns ±Inf (positive or negative infinity), depending on the sign.\n\nCommon triggers:\n• Multiplying two very large numbers (e.g., 10²⁰⁰ × 10²⁰⁰ = 10⁴⁰⁰ > Ω)\n• Dividing by a very small number (e.g., 1 / 10⁻³¹⁰ = 10³¹⁰ > Ω)\n• Repeated multiplication in iterative algorithms without scaling\n\nConsequences:\n• Any arithmetic with Inf propagates: Inf + x = Inf, Inf × x = Inf (for x ≠ 0)\n• Inf - Inf = NaN (undefined)\n• Overflow is usually a FATAL error in a computation — the result is completely wrong.',
+      },
+      {
+        type: 'highlight',
+        title: 'Underflow — What it is and when it happens',
+        content: 'UNDERFLOW occurs when a computation produces a result whose MAGNITUDE IS TOO SMALL to be stored as a normalized floating point number.\n\nThere are two levels:\n\n1. GRADUAL UNDERFLOW (into subnormal range):\n   When the result is smaller than λ = 2⁻¹⁰²² ≈ 2.2 × 10⁻³⁰⁸ but larger than λ_sub = 2⁻¹⁰⁷⁴ ≈ 5 × 10⁻³²⁴,\n   the number is stored as a SUBNORMAL (denormalized) number.\n   Subnormals have the exponent bits all zero and no implicit leading 1.\n   They still represent the value, but with FEWER significant bits (reduced precision).\n\n2. HARD UNDERFLOW (flush to zero):\n   When the result is smaller than λ_sub = 2⁻¹⁰⁷⁴, it FLUSHES TO ZERO.\n   The result is stored as exactly 0, losing all information.\n\nCommon triggers:\n• Multiplying two very small numbers (e.g., 10⁻²⁰⁰ × 10⁻²⁰⁰ = 10⁻⁴⁰⁰ < λ)\n• Iterative algorithms that produce exponentially decaying sequences\n\nConsequences:\n• Gradual underflow: computation continues with reduced precision\n• Hard underflow to zero: subsequent division by this zero causes overflow to Inf\n• Often LESS catastrophic than overflow, but can silently introduce error',
+      },
+      {
+        type: 'example',
+        title: 'Example: Overflow and Underflow in Practice',
+        content: 'In R (IEEE 754 double precision):\n\n  OVERFLOW:\n  > 1e308 * 10          # 10^309 > Ω\n  [1] Inf               # result overflows to Inf\n  > .Machine$double.xmax\n  [1] 1.797693e+308      # this is Ω\n\n  UNDERFLOW (gradual, into subnormal range):\n  > 1e-308 / 10         # 10^-309 < λ, enters subnormal range\n  [1] 1e-309            # still representable, but with fewer sig. bits\n\n  HARD UNDERFLOW (flush to zero):\n  > 1e-308 / 1e17       # 10^-325 < λ_sub\n  [1] 0                 # flushes to zero\n  > .Machine$double.xmin\n  [1] 2.225074e-308     # this is λ (smallest NORMAL number)\n\n  PRACTICAL DANGER — underflow then overflow:\n  > x <- 1e-200\n  > (x * x) / x         # should be x = 1e-200\n  > # x*x = 1e-400 underflows to 0, then 0/x = 0 (wrong answer!)',
+      },
+      {
+        type: 'warning',
+        title: 'Key distinction: Overflow vs Underflow vs Catastrophic Cancellation',
+        content: 'OVERFLOW: result too LARGE → becomes ±Inf\n  Cause: multiplying/exponentiating large numbers, dividing by tiny numbers\n  Effect: computation is completely wrong\n\nUNDERFLOW: result too SMALL → becomes subnormal or 0\n  Cause: multiplying tiny numbers, iterative decay\n  Effect: gradual loss of precision, or silent zero (dangerous if used as divisor)\n\nCATASTROPHIC CANCELLATION: result is in NORMAL range but PRECISION is lost\n  Cause: subtracting two nearly equal numbers\n  Effect: leading significant digits cancel, result has far fewer correct digits\n  Example: (1.000001 - 1.000000) = 0.000001 (only 1 sig. fig. instead of 7)',
       },
       {
         type: 'text',
