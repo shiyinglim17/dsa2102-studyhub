@@ -364,8 +364,13 @@ const chapter1Topics: Topic[] = [
     ],
     content: [
       {
+        type: 'highlight',
+        title: '📖 Notation Guide — Read This First',
+        content: 'This topic introduces several important notations. Here is what each one means:\n\n• fl(x)  — "the floating point representation of x". When a real number x is stored in a computer, it gets rounded to the nearest representable floating point number. We write this rounded value as fl(x).\n  Example: fl(0.1) ≠ 0.1 exactly, because 0.1 cannot be represented exactly in binary floating point.\n\n• fl(1 + ε) > 1  — this is the defining TEST for machine epsilon. We ask: for what smallest positive ε does adding ε to 1 actually change the stored value? If ε is too tiny, fl(1 + ε) rounds back to fl(1) = 1 and the addition is completely lost.\n\n• ε_mach  (machine epsilon / unit roundoff)  — the smallest positive number such that fl(1 + ε_mach) > 1. It measures the "gap" between 1 and the next representable floating point number. For IEEE 754 double precision: ε_mach = 2⁻⁵² ≈ 2.22 × 10⁻¹⁶.\n\n• p  — the number of significand (mantissa) bits, including the implicit leading 1. For IEEE 754 double precision, p = 53 (52 stored fraction bits + 1 implicit leading bit).\n\n• bias  — a fixed offset added to the stored exponent so that it is always a non-negative integer. For IEEE 754 double, bias = 1023. Actual exponent = stored exponent − bias.\n\n• Ω  — the overflow threshold (largest finite floating point number ≈ 1.8 × 10³⁰⁸). Any result larger than Ω in magnitude becomes ±Inf.\n\n• λ  — the underflow threshold (smallest positive NORMAL number ≈ 2.2 × 10⁻³⁰⁸). Results smaller than λ become subnormal (fewer significant bits).\n\n• λ_sub  — the smallest positive SUBNORMAL number (≈ 5 × 10⁻³²⁴). Results smaller than λ_sub flush to exactly zero.',
+      },
+      {
         type: 'text',
-        content: '**IEEE 754 Double Precision Standard**\n\nMost computers use IEEE 754 double precision floating point:\n- 1 sign bit (s)\n- 11 exponent bits (e₁e₂...e₁₁)\n- 52 fraction bits (b₁b₂...b₅₂), with implicit leading 1 → 53 bits of precision\n- Total: 64 bits\n- Bias = 1023 (so stored exponent = actual exponent + 1023)',
+        content: '**IEEE 754 Double Precision Standard**\n\nMost computers use IEEE 754 double precision floating point:\n- 1 sign bit (s)  — 0 means positive, 1 means negative\n- 11 exponent bits (e₁e₂...e₁₁)  — stored as unsigned integer; actual exponent = stored value − bias (1023)\n- 52 fraction bits (b₁b₂...b₅₂)  — the digits after the binary point in the significand; there is an implicit leading 1, so we get p = 53 bits of precision total\n- Total: 64 bits\n- Bias = 1023 (so stored exponent = actual exponent + 1023)\n\nThe value stored is: (−1)ˢ × 1.b₁b₂...b₅₂ × 2^(stored_exponent − 1023)',
       },
       {
         type: 'text',
@@ -835,6 +840,11 @@ const chapter2Topics: Topic[] = [
     ],
     content: [
       {
+        type: 'highlight',
+        title: '📖 Notation Guide — Key Symbols in This Topic',
+        content: 'This topic uses several mathematical notations. Here is what each one means:\n\n• κ(A)  (kappa of A)  — the condition number of matrix A. Measures how sensitive the solution x of Ax = b is to small changes in b or A. κ(A) ≥ 1 always; κ(A) = 1 is perfectly conditioned; κ(A) >> 1 is ill-conditioned.\n\n• ‖x‖  (norm of x)  — a measure of the "size" or "length" of a vector x. Think of it as a generalisation of absolute value to vectors. The subscript tells you which norm: ‖x‖₁ (sum of |entries|), ‖x‖₂ (Euclidean length), ‖x‖∞ (largest |entry|).\n\n• ‖A‖  (norm of matrix A)  — the induced matrix norm: the maximum factor by which A can stretch a unit vector. ‖A‖ = max over all unit vectors x of ‖Ax‖.\n\n• σ_max, σ_min  — the largest and smallest singular values of A. For the 2-norm: κ₂(A) = σ_max / σ_min.\n\n• O(n³)  (Big-O notation)  — describes how the number of arithmetic operations scales with problem size n. O(n³) means the operation count grows proportionally to n³. For n = 100: O(n²) ≈ 10,000 ops; O(n³) ≈ 1,000,000 ops — a factor of 100 more. This is why we prefer O(n²) algorithms over O(n³) when possible.\n\n• δx, δb  — small perturbations (errors) in x and b respectively. δ (delta) denotes a small change.',
+      },
+      {
         type: 'text',
         content: '**Conditioning of Linear Systems**\n\nThe condition number κ(A) measures how sensitive the solution x of Ax = b is to perturbations in b (or A). A large condition number means the system is ill-conditioned.',
       },
@@ -911,6 +921,11 @@ const chapter3Topics: Topic[] = [
       },
     ],
     content: [
+      {
+        type: 'highlight',
+        title: '📖 Notation Guide — Key Symbols in This Chapter',
+        content: 'Chapter 3 introduces several new notations. Here is what each one means:\n\n• ‖Ax − b‖₂  — the 2-norm (Euclidean length) of the residual vector (Ax − b). This is the square root of the sum of squared residuals. Minimising ‖Ax − b‖₂ is equivalent to minimising ‖Ax − b‖₂² (the sum of squares), which is the least squares criterion.\n\n• Aᵀ  (A-transpose)  — the matrix obtained by flipping A across its diagonal (rows become columns). If A is m×n, then Aᵀ is n×m. Entry (i,j) of Aᵀ equals entry (j,i) of A.\n\n• AᵀA  — the n×n matrix formed by multiplying A-transpose by A. It is always symmetric and positive semi-definite. When A has full column rank, AᵀA is symmetric positive definite (SPD) and invertible.\n\n• x̂  (x-hat)  — the least squares solution, i.e., the x that minimises ‖Ax − b‖₂. The hat (̂) conventionally denotes an estimated or optimal value.\n\n• r = b − Ax̂  — the residual vector. It measures how far the best fit Ax̂ is from the data b. In a well-fitted model, residuals are small.\n\n• ℝᵐ  — the set of all m-dimensional real vectors (m-dimensional Euclidean space). ℝⁿ means n-dimensional real space.\n\n• A⁺ = (AᵀA)⁻¹Aᵀ  — the Moore-Penrose pseudoinverse of A. When A has full column rank, x̂ = A⁺b gives the unique least squares solution.\n\n• Q, R  — the matrices from QR factorization: Q is orthogonal (QᵀQ = I, columns are orthonormal), R is upper triangular. QR gives a numerically stable way to solve least squares.',
+      },
       {
         type: 'text',
         content: '**The Overdetermined System Problem**\n\nIn practice, we often have more equations than unknowns (m > n). For example:\n- Fitting a line to 100 data points: 100 equations, 2 unknowns\n- Multiple linear regression: more observations than predictors\n\nSuch systems are generally inconsistent (no exact solution), so we find the x that makes Ax as close to b as possible.',
