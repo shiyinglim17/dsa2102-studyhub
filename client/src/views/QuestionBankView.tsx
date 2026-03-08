@@ -393,7 +393,7 @@ export default function QuestionBankView() {
   }, [chapterFilter]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-stone-50 to-orange-50">
+    <div className="flex-1 overflow-y-auto bg-gradient-to-br from-amber-50 via-stone-50 to-orange-50">
       {/* Hero header */}
       <div
         className="relative py-12 px-6 overflow-hidden"
