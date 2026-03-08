@@ -12,7 +12,7 @@ interface ProgressViewProps {
 const PROGRESS_BG = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663399467971/gAzQjKP5PP6fvZg3ueXhxZ/progress-bg-9sMmhGbFt3BXJNZ4FMHQBV.webp';
 
 export default function ProgressView({ onNavigate }: ProgressViewProps) {
-  const { chapterProgress, getTopicMastery, getChapterMastery, getOverallMastery, getWeakTopics, resetProgress } = useProgress();
+  const { chapterProgress, getTopicMastery, getChapterMastery, getOverallMastery, getWeakTopics, resetProgress, getTotalBankAttempted } = useProgress();
   const overallMastery = getOverallMastery();
   const weakTopics = getWeakTopics();
 
@@ -28,6 +28,7 @@ export default function ProgressView({ onNavigate }: ProgressViewProps) {
     acc + Object.values(ch.topicProgress).reduce((a, t) => a + t.questionsAttempted, 0), 0);
   const totalCorrect = Object.values(chapterProgress).reduce((acc, ch) =>
     acc + Object.values(ch.topicProgress).reduce((a, t) => a + t.questionsCorrect, 0), 0);
+  const totalBankAttempted = getTotalBankAttempted();
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -53,8 +54,8 @@ export default function ProgressView({ onNavigate }: ProgressViewProps) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
             { label: 'Overall Mastery', value: `${overallMastery}%`, icon: Target, color: 'oklch(0.58 0.14 35)' },
-            { label: 'Questions Tried', value: `${totalAttempted}/${totalQuestions}`, icon: BarChart3, color: 'oklch(0.38 0.12 210)' },
-            { label: 'Correct Answers', value: totalAttempted > 0 ? `${Math.round(totalCorrect/totalAttempted*100)}%` : '—', icon: CheckCircle, color: 'oklch(0.55 0.12 145)' },
+            { label: 'Quiz Questions', value: `${totalAttempted}/${totalQuestions}`, icon: BarChart3, color: 'oklch(0.38 0.12 210)' },
+            { label: 'Bank Questions', value: `${totalBankAttempted} done`, icon: CheckCircle, color: 'oklch(0.55 0.12 145)' },
             { label: 'Weak Topics', value: weakTopics.length.toString(), icon: AlertTriangle, color: 'oklch(0.65 0.15 25)' },
           ].map(({ label, value, icon: Icon, color }) => (
             <div key={label} className="concept-card p-4">
@@ -147,9 +148,11 @@ export default function ProgressView({ onNavigate }: ProgressViewProps) {
                             <div className="progress-tropical h-1.5">
                               <div className="progress-tropical-fill" style={{ width: `${tMastery}%`, height: '100%' }} />
                             </div>
-                            {tp && tp.questionsAttempted > 0 && (
+                            {tp && (tp.questionsAttempted > 0 || (tp.bankAttempted ?? 0) > 0) && (
                               <p className="text-xs mt-0.5" style={{ color: 'oklch(0.60 0.04 60)', fontFamily: 'Lora, serif' }}>
-                                {tp.questionsCorrect}/{tp.questionsAttempted} correct · {topicQs.length} total questions
+                                {tp.questionsAttempted > 0 && `${tp.questionsCorrect}/${tp.questionsAttempted} quiz correct`}
+                                {tp.questionsAttempted > 0 && (tp.bankAttempted ?? 0) > 0 && ' · '}
+                                {(tp.bankAttempted ?? 0) > 0 && `${tp.bankAttempted} bank q${(tp.bankAttempted ?? 0) !== 1 ? 's' : ''} done`}
                               </p>
                             )}
                           </div>
@@ -193,7 +196,8 @@ export default function ProgressView({ onNavigate }: ProgressViewProps) {
                           {wt.topicTitle}
                         </p>
                         <p className="text-xs" style={{ fontFamily: 'Lora, serif', color: 'oklch(0.55 0.06 60)' }}>
-                          {ch?.title} · {tp?.questionsCorrect}/{tp?.questionsAttempted} correct
+                          {ch?.title} · {tp?.questionsCorrect}/{tp?.questionsAttempted} quiz correct
+                          {(tp?.bankAttempted ?? 0) > 0 && ` · ${tp?.bankAttempted} bank q${(tp?.bankAttempted ?? 0) !== 1 ? 's' : ''} done`}
                         </p>
                         {wrongQs.length > 0 && (
                           <div className="mt-2 space-y-1">

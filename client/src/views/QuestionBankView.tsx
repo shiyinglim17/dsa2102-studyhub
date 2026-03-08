@@ -67,14 +67,23 @@ function QuestionCard({ question, index }: { question: BankQuestion; index: numb
     userAnswer: '',
   });
   const [expanded, setExpanded] = useState(false);
-  const { recordAnswer } = useProgress();
+  const { recordBankAttempt } = useProgress();
 
   const diffClass = difficultyColors[question.difficulty];
 
   function handleReveal() {
+    if (!state.revealed) {
+      // Only record once when first revealed
+      recordBankAttempt(question.type, question.id, true);
+    }
     setState(s => ({ ...s, revealed: true, attempted: true }));
-    // Record as attempted in progress (map to chapter 2 as default for bank questions)
-    recordAnswer(question.id, question.type, 'chapter2', true);
+  }
+
+  function handleMarkAttempted() {
+    if (!state.attempted) {
+      recordBankAttempt(question.type, question.id, false);
+    }
+    setState(s => ({ ...s, attempted: true }));
   }
 
   function handleReset() {
@@ -269,7 +278,7 @@ function QuestionCard({ question, index }: { question: BankQuestion; index: numb
                     </div>
                     {!state.attempted && (
                       <button
-                        onClick={() => setState(s => ({ ...s, attempted: true }))}
+                        onClick={handleMarkAttempted}
                         className="mt-3 text-xs text-green-600 hover:text-green-700 flex items-center gap-1 font-semibold"
                       >
                         <CheckCheck className="w-3 h-3" /> Mark as reviewed

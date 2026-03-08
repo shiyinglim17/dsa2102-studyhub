@@ -109,8 +109,8 @@ const chapter1Topics: Topic[] = [
       },
       {
         type: 'video',
-        videoId: 'ykVqNNkJSYU',
-        videoTitle: 'Numerical Methods: Errors and Approximations (MIT OpenCourseWare)',
+        videoId: 'b1CFNSR3f40',
+        videoTitle: 'Numerical Methods: Roundoff and Truncation Errors — Numerical Methods Guy',
         content: '',
       },
     ],
@@ -174,27 +174,55 @@ const chapter1Topics: Topic[] = [
     ],
     content: [
       {
+        type: 'highlight',
+        title: 'The Big Picture',
+        content: 'Computers store everything as sequences of 0s and 1s (bits). Each bit represents a power of 2. Understanding binary is the foundation for understanding how floating-point numbers work — and why they have precision limits.',
+      },
+      {
         type: 'text',
-        content: '**Numeral Systems**\n\nComputers store all numbers in binary (base 2). Understanding binary is essential for understanding floating-point arithmetic and its limitations.\n\n- **Decimal (base 10)**: digits 0–9, each position is a power of 10\n- **Binary (base 2)**: digits 0–1, each position is a power of 2',
+        content: '**PART 1: Reading Binary Numbers (Binary → Decimal)**\n\nA binary number like (1101.01)₂ is read position by position. Each position has a value that is a power of 2:\n\n  Position: ... 2³  2²  2¹  2⁰  .  2⁻¹  2⁻²  ...\n  Value:    ...  8   4   2   1  .  0.5  0.25  ...\n\n**Rule:** Multiply each bit by its positional value, then sum all the 1-bits.',
       },
       {
         type: 'example',
-        title: 'Converting Decimal to Binary (Integer Part)',
-        content: 'Convert 13 to binary:\n13 ÷ 2 = 6 remainder 1\n6 ÷ 2 = 3 remainder 0\n3 ÷ 2 = 1 remainder 1\n1 ÷ 2 = 0 remainder 1\nRead remainders bottom to top: (1101)₂\nVerify: 1×2³ + 1×2² + 0×2¹ + 1×2⁰ = 8 + 4 + 0 + 1 = 13 ✓',
+        title: 'Example 1: Binary → Decimal',
+        content: 'Convert (10110.011)₂ to decimal.\n\nStep 1 — Label positions:\n  Bit:    1    0    1    1    0  .  0    1    1\n  Power: 2⁴   2³   2²   2¹   2⁰  .  2⁻¹  2⁻²  2⁻³\n  Value: 16    8    4    2    1  .  0.5  0.25  0.125\n\nStep 2 — Sum where bit = 1:\n  16 + 0 + 4 + 2 + 0 + 0 + 0.25 + 0.125 = 22.375\n\nAnswer: (10110.011)₂ = 22.375',
+      },
+      {
+        type: 'text',
+        content: '**PART 2: Decimal → Binary (Integer Part)**\n\nAlgorithm: Repeatedly divide by 2, collect remainders, then read them bottom to top.\n\nWhy it works: Each division strips off the lowest-order bit (the remainder IS that bit), and the quotient contains the remaining higher-order bits.',
       },
       {
         type: 'example',
-        title: 'Converting Decimal to Binary (Fractional Part)',
-        content: 'Convert 0.375 to binary:\n0.375 × 2 = 0.75 → bit = 0\n0.75 × 2 = 1.5 → bit = 1\n0.5 × 2 = 1.0 → bit = 1\nResult: (0.011)₂\nVerify: 0×2⁻¹ + 1×2⁻² + 1×2⁻³ = 0 + 0.25 + 0.125 = 0.375 ✓\n\nNote: Some decimal fractions (like 0.1) cannot be represented exactly in binary — they produce infinite repeating binary expansions!',
+        title: 'Example 2: Integer Decimal → Binary',
+        content: 'Convert 45 to binary.\n\n  45 ÷ 2 = 22  remainder  1  ← least significant bit (rightmost)\n  22 ÷ 2 = 11  remainder  0\n  11 ÷ 2 =  5  remainder  1\n   5 ÷ 2 =  2  remainder  1\n   2 ÷ 2 =  1  remainder  0\n   1 ÷ 2 =  0  remainder  1  ← most significant bit (leftmost)\n\nRead remainders bottom to top: (101101)₂\n\nVerify: 32 + 0 + 8 + 4 + 0 + 1 = 45 ✓',
+      },
+      {
+        type: 'text',
+        content: '**PART 3: Decimal → Binary (Fractional Part)**\n\nAlgorithm: Repeatedly multiply by 2. Each time, the digit before the decimal point is the next binary bit. Read bits top to bottom.\n\nWhy it works: Multiplying by 2 shifts the binary point right by one position, exposing the next bit.',
+      },
+      {
+        type: 'example',
+        title: 'Example 3: Fractional Decimal → Binary',
+        content: 'Convert 0.6875 to binary.\n\n  0.6875 × 2 = 1.375  → bit = 1  ← first bit after the binary point\n  0.375  × 2 = 0.75   → bit = 0\n  0.75   × 2 = 1.5    → bit = 1\n  0.5    × 2 = 1.0    → bit = 1  (remainder = 0.0, stop)\n\nRead top to bottom: (0.1011)₂\n\nVerify: 0.5 + 0 + 0.125 + 0.0625 = 0.6875 ✓\n\nFor a mixed number like 13.6875:\n  Integer part: 13 = (1101)₂\n  Fraction part: 0.6875 = (.1011)₂\n  Combined: (1101.1011)₂',
       },
       {
         type: 'warning',
-        title: 'Important: Not all decimals have exact binary representations',
-        content: '0.1 in decimal = 0.0001100110011... (repeating) in binary. This is why 0.1 + 0.2 ≠ 0.3 in most programming languages including R!',
+        title: 'When the fraction never terminates — the 0.1 problem',
+        content: 'Convert 0.1 to binary:\n  0.1 × 2 = 0.2 → bit = 0\n  0.2 × 2 = 0.4 → bit = 0\n  0.4 × 2 = 0.8 → bit = 0\n  0.8 × 2 = 1.6 → bit = 1\n  0.6 × 2 = 1.2 → bit = 1\n  0.2 × 2 = 0.4 → bit = 0  ← back to 0.4, pattern repeats forever!\n\n0.1 = (0.000110011001100...)₂ — an infinite repeating binary fraction.\n\nSince computers have finite bits, this must be truncated → rounding error.\nThis is why in R: 0.1 + 0.2 ≠ 0.3 (it equals 0.30000000000000004).\n\nKey insight: A decimal fraction terminates in binary ONLY if its denominator (in lowest terms) is a power of 2.',
       },
       {
         type: 'text',
-        content: '**Binary Arithmetic**\n\nAddition rules: 0+0=0, 0+1=1, 1+0=1, 1+1=10 (carry 1)\nSubtraction: use two\'s complement for negative numbers\nMultiplication: like decimal but only 0 and 1',
+        content: '**PART 4: Binary Arithmetic**\n\nBinary addition follows the same column-by-column logic as decimal, but with only two digits. The only new rule to learn is the carry:\n\n  0 + 0 = 0         (no carry)\n  0 + 1 = 1         (no carry)\n  1 + 0 = 1         (no carry)\n  1 + 1 = 10        (write 0, carry 1)\n  1 + 1 + 1 = 11    (write 1, carry 1)  ← when there is also a carry-in',
+      },
+      {
+        type: 'example',
+        title: 'Example 4: Binary Addition',
+        content: 'Add (1011)₂ + (0110)₂\n\n     carry: 1 1 1 0\n            1 0 1 1\n          + 0 1 1 0\n          ---------\n\nColumn by column (right to left):\n  Col 0 (2⁰): 1 + 0 = 1          → write 1, carry 0\n  Col 1 (2¹): 1 + 1 = 10         → write 0, carry 1\n  Col 2 (2²): 0 + 1 + 1(carry) = 10 → write 0, carry 1\n  Col 3 (2³): 1 + 0 + 1(carry) = 10 → write 0, carry 1\n  Col 4 (2⁴): 0 + 0 + 1(carry) = 1  → write 1\n\nResult: (10001)₂\n\nVerify: 11 + 6 = 17 = 16 + 1 = (10001)₂ ✓',
+      },
+      {
+        type: 'highlight',
+        title: 'Quick Reference Summary',
+        content: 'Binary → Decimal: Multiply each bit by its power of 2, sum all the 1-bits.\nInteger → Binary: Divide by 2 repeatedly, collect remainders, read BOTTOM TO TOP.\nFraction → Binary: Multiply by 2 repeatedly, collect integer parts, read TOP TO BOTTOM.\nBinary addition: Column by column right to left; carry when sum ≥ 2.',
       },
     ],
     quiz: [
@@ -977,8 +1005,8 @@ const chapter3Topics: Topic[] = [
       },
       {
         type: 'video',
-        videoId: 'zU0W4QB9WXY',
-        videoTitle: 'QR Decomposition and Gram-Schmidt — MIT 18.06',
+        videoId: 'TRktLuAktBQ',
+        videoTitle: 'Gram-Schmidt Orthogonalization — MIT 18.06SC Linear Algebra',
         content: '',
       },
     ],
