@@ -1,17 +1,17 @@
-// Home page — DSA2102 Study Hub landing
-// Design: "Golden Hour Study Retreat" — hero with Bali treehouse image, warm welcome
+// HomeView — landing page for DSA2102 Study Hub
+// Design: "Golden Hour Study Retreat" — hero with Bali treehouse image
 
 import { chapters } from '@/lib/courseData';
 import { useProgress } from '@/contexts/ProgressContext';
-import { BookOpen, Target, Zap, Clock } from 'lucide-react';
+import { BookOpen, BarChart3, Zap, Clock } from 'lucide-react';
 
 const HERO_IMG = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663399467971/gAzQjKP5PP6fvZg3ueXhxZ/hero-tropical-EZbVRMKsUfhN9PNzqD3jB5.webp';
 
-interface HomeProps {
+interface HomeViewProps {
   onNavigate: (view: string, chapterId?: string, topicId?: string) => void;
 }
 
-export default function Home({ onNavigate }: HomeProps) {
+export default function HomeView({ onNavigate }: HomeViewProps) {
   const { getChapterMastery, getOverallMastery, getWeakTopics } = useProgress();
   const overallMastery = getOverallMastery();
   const weakTopics = getWeakTopics();
@@ -19,7 +19,7 @@ export default function Home({ onNavigate }: HomeProps) {
   return (
     <div className="flex-1 overflow-y-auto">
       {/* Hero Section */}
-      <div className="relative h-72 overflow-hidden">
+      <div className="relative h-72 overflow-hidden flex-shrink-0">
         <img
           src={HERO_IMG}
           alt="Tropical study retreat"
@@ -59,14 +59,14 @@ export default function Home({ onNavigate }: HomeProps) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
               { icon: BookOpen, label: 'Formula Sheet', desc: 'All key formulas', action: () => onNavigate('formulas'), color: '#1A7A8A' },
-              { icon: Target, label: 'Practice Quiz', desc: 'Test your knowledge', action: () => onNavigate('quiz'), color: '#C4622D' },
-              { icon: BarChart3Icon, label: 'My Progress', desc: 'Track mastery', action: () => onNavigate('progress'), color: '#2A5C3F' },
-              { icon: Zap, label: 'Weak Topics', desc: `${weakTopics.length} need review`, action: () => onNavigate('progress'), color: '#8B4513' },
+              { icon: Zap, label: 'Practice Quiz', desc: 'Test your knowledge', action: () => onNavigate('quiz'), color: '#C4622D' },
+              { icon: BarChart3, label: 'My Progress', desc: 'Track mastery', action: () => onNavigate('progress'), color: '#2A5C3F' },
+              { icon: Clock, label: 'Weak Topics', desc: `${weakTopics.length} need review`, action: () => onNavigate('progress'), color: '#8B4513' },
             ].map(({ icon: Icon, label, desc, action, color }) => (
               <button
                 key={label}
                 onClick={action}
-                className="concept-card flex flex-col items-start gap-2 p-4 text-left hover:scale-105 transition-transform"
+                className="concept-card flex flex-col items-start gap-2 p-4 text-left"
               >
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `${color}20` }}>
                   <Icon className="w-4 h-4" style={{ color }} />
@@ -114,7 +114,7 @@ export default function Home({ onNavigate }: HomeProps) {
                           {ch.subtitle}
                         </p>
                       </div>
-                      <div className="flex-shrink-0 text-right">
+                      <div className="flex-shrink-0 text-right pr-2">
                         {mastery > 0 ? (
                           <div>
                             <p className="text-2xl font-bold" style={{ fontFamily: 'Cormorant Garamond, serif', color: mastery >= 75 ? 'oklch(0.75 0.15 145)' : mastery >= 40 ? 'oklch(0.88 0.10 75)' : 'oklch(0.75 0.15 25)' }}>
@@ -146,7 +146,7 @@ export default function Home({ onNavigate }: HomeProps) {
               </h3>
             </div>
             <div className="space-y-2">
-              {weakTopics.slice(0, 3).map(wt => (
+              {weakTopics.slice(0, 4).map(wt => (
                 <button
                   key={wt.topicId}
                   onClick={() => onNavigate('topic', wt.chapterId, wt.topicId)}
@@ -164,7 +164,7 @@ export default function Home({ onNavigate }: HomeProps) {
         )}
 
         {/* Midterm Info */}
-        <div className="rounded-xl p-5" style={{ background: 'linear-gradient(135deg, oklch(0.96 0.03 210), oklch(0.94 0.05 200))', border: '1.5px solid oklch(0.75 0.10 210)' }}>
+        <div className="rounded-xl p-5 mb-6" style={{ background: 'linear-gradient(135deg, oklch(0.96 0.03 210), oklch(0.94 0.05 200))', border: '1.5px solid oklch(0.75 0.10 210)' }}>
           <h3 className="font-bold mb-3" style={{ fontFamily: 'Cormorant Garamond, serif', color: 'oklch(0.22 0.05 220)', fontSize: '1.1rem' }}>
             📋 Midterm Exam Details
           </h3>
@@ -184,15 +184,5 @@ export default function Home({ onNavigate }: HomeProps) {
         </div>
       </div>
     </div>
-  );
-}
-
-function BarChart3Icon({ className, style }: { className?: string; style?: React.CSSProperties }) {
-  return (
-    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <line x1="18" y1="20" x2="18" y2="10" />
-      <line x1="12" y1="20" x2="12" y2="4" />
-      <line x1="6" y1="20" x2="6" y2="14" />
-    </svg>
   );
 }
