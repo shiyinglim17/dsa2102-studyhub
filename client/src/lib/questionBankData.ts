@@ -176,9 +176,58 @@ const floatingPointQuestions: BankQuestion[] = [
     difficulty: 'medium',
     tags: ['exact-representation', 'binary', 'single-precision'],
   },
+  // ── TUTORIAL 1 FLOATING POINT QUESTIONS ──
+  {
+    id: 'tut1-fp-1',
+    source: 'DSA2102 2526s2 Tutorial 1',
+    qnum: 'Q4',
+    type: 'floating_point',
+    topic: 'Smallest normal and largest subnormal in single precision',
+    question: 'Find the smallest positive normalized number and largest positive subnormal number that can be represented by single-precision floating-point format.',
+    solution: 'With 8 bits for the exponent, the bias is 127 (= 2^7 − 1). The smallest exponent a normal number can have is 1 − 127 = −126.\n\nSmallest positive normal number (UFL):\n  UFL = 2^(−126) ≈ 1.18 × 10^−38\n\nLargest positive subnormal number:\n  The largest subnormal has all 23 fraction bits equal to 1, with exponent bits all zero.\n  In binary: 0.11111111111111111111111 × 2^(1−1111111) = 0.11111111111111111111111 × 2^(−126)\n  = (1 − 2^(−23)) × 2^(−126) = 2^(−126) − 2^(−149)\n  ≈ 1.175 × 10^−38\n\nNote: The largest subnormal is just one ULP (unit in last place = 2^(−149)) below the smallest normal number.',
+    guide: '**Key facts for single precision:**\n- 8 exponent bits → bias = 127\n- Normal numbers: exponent bits NOT all zero and NOT all one\n  - Smallest exponent stored = 1 → actual exponent = 1 − 127 = −126\n  - Smallest normal = 1.000...0 × 2^(−126) = 2^(−126)\n\n**Subnormal numbers:** exponent bits all zero, fraction nonzero\n  - Represented as 0.fraction × 2^(1−127) = 0.fraction × 2^(−126)\n  - Largest subnormal: fraction = 111...1 (23 ones) = 1 − 2^(−23)\n  - So largest subnormal = (1 − 2^(−23)) × 2^(−126)\n\n**Memory aid:** Smallest normal = 2^(−126); Largest subnormal = Smallest normal − 2^(−149)',
+    difficulty: 'medium',
+    tags: ['single-precision', 'subnormal', 'UFL', 'float32', 'tutorial'],
+  },
+  {
+    id: 'tut1-fp-2',
+    source: 'DSA2102 2526s2 Tutorial 1',
+    qnum: 'Q5',
+    type: 'floating_point',
+    topic: 'Decode half-precision floating point bit patterns',
+    question: 'Consider the half-precision floating-point format, which has 5 bits for the exponent and 10 bits for the significand (total 16 bits). Find the decimal number represented by each bit pattern:\n\n(a) 0 10011 0001110000\n(b) 1 00000 1111111111\n(c) 0 11111 0000000000',
+    solution: '(a) 0 10011 0001110000\n  Sign = +1, Stored exponent = 10011₂ = 19, Bias = 2^(5−1)−1 = 15\n  Actual exponent = 19 − 15 = 4\n  Significand = 1.0001110000₂ = 1 + 1/16 + 1/32 + 1/64 = 1 + 7/64 = 71/64\n  Value = (+1) × (71/64) × 2^4 = 71/64 × 16 = 71/4 = 17.75\n\n(b) 1 00000 1111111111\n  Sign = −1, Stored exponent = 0 (all zeros) → SUBNORMAL\n  Subnormal: value = (−1) × 0.1111111111₂ × 2^(1−15) = −1 × (1 − 2^(−10)) × 2^(−14)\n  = −(1 − 1/1024) × 2^(−14) ≈ −6.097 × 10^−5\n\n(c) 0 11111 0000000000\n  Stored exponent = 11111 (all ones), fraction = 0 → Special value: +∞ (positive infinity)',
+    guide: '**Half-precision format:** 1 sign + 5 exponent + 10 fraction = 16 bits. Bias = 2^(5−1)−1 = 15.\n\n**Decoding steps:**\n1. Read sign bit (0 = +, 1 = −)\n2. Convert exponent bits to decimal; subtract bias to get actual exponent\n3. If exponent bits all zero: SUBNORMAL (no implicit leading 1)\n4. If exponent bits all one: SPECIAL (fraction=0 → ±Inf; fraction≠0 → NaN)\n5. Otherwise: NORMAL, value = (−1)^s × 1.fraction × 2^(exponent−bias)\n\n**For (a):** 10011₂ = 16+2+1 = 19; 19−15 = 4; 1.0001110000₂ = 1 + 2^−4 + 2^−5 + 2^−6 = 1.109375; value = 1.109375 × 16 = 17.75\n\n**For (b):** Exponent all zeros → subnormal; no implicit leading 1\n\n**For (c):** Exponent all ones, fraction zero → +∞',
+    difficulty: 'medium',
+    tags: ['half-precision', 'bit-pattern', 'decode', 'subnormal', 'infinity', 'tutorial'],
+  },
+  {
+    id: 'tut1-fp-3',
+    source: 'DSA2102 2526s2 Tutorial 1',
+    qnum: 'Q6',
+    type: 'floating_point',
+    topic: 'Exact representability of 9 − 2^(−k) in single precision',
+    question: 'For which positive integers k can the number 9 − 2^(−k) be represented exactly (with no rounding error) in binary single-precision floating-point arithmetic?',
+    solution: '9 = 8 + 1 = 2^3 + 2^0 = 1001₂ = 1.001 × 2^3.\n\nSo 9 − 2^(−k) = 1.001 × 2^3 − 2^(−k).\n\nIn the representation 1.b₁b₂...b₂₃ × 2^3, the bit at position j after the binary point corresponds to 2^(3−j). We need 2^(−k) = 2^(3−j) for some j ∈ {1,...,23}, which gives j = k+3.\n\nFor exact representation, we need j ≤ 23, i.e., k+3 ≤ 23, i.e., k ≤ 20.\n\nTherefore: k = 1, 2, 3, ..., 20.',
+    guide: '**Strategy:** Express 9 in binary, then determine which subtracted powers of 2 fit within the 23-bit mantissa.\n\n**Step 1:** 9 = 1001₂ = 1.001 × 2^3 (normalized form, exponent = 3)\n\n**Step 2:** In the format 1.b₁b₂...b₂₃ × 2^3:\n- Bit position j corresponds to value 2^(3−j)\n- We need 2^(−k) to land on a bit position: 3−j = −k ⇒ j = k+3\n\n**Step 3:** For exact representation, j ≤ 23 (only 23 fraction bits):\n  k+3 ≤ 23 ⇒ k ≤ 20\n\n**Answer:** k ∈ {1, 2, 3, ..., 20}',
+    difficulty: 'hard',
+    tags: ['exact-representation', 'single-precision', 'binary', 'mantissa', 'tutorial'],
+  },
+  {
+    id: 'tut1-fp-4',
+    source: 'DSA2102 2526s2 Tutorial 1',
+    qnum: 'Q7',
+    type: 'floating_point',
+    topic: 'Precision bits of normalized and subnormal single-precision numbers',
+    question: 'Consider the IEEE single precision format (8 exponent bits, 23 mantissa bits).\n\n(a) What is the maximum precision (in bits) a non-zero normalized number can have?\n(b) What is the minimum precision (in bits) a non-zero normalized number can have?\n(c) What is the maximum precision (in bits) a non-zero subnormal number can have?\n(d) What is the minimum precision (in bits) a non-zero subnormal number can have?',
+    solution: '(a) Maximum precision of a normalized number: 24 bits.\n  Normalized numbers have an implicit leading 1 plus 23 stored fraction bits, giving p = 24 bits of precision.\n\n(b) Minimum precision of a normalized number: 24 bits.\n  ALL normalized numbers have exactly p = 24 bits of precision (the implicit leading 1 is always present).\n\n(c) Maximum precision of a subnormal number: 23 bits.\n  The largest subnormal has fraction = 111...1 (23 ones), so it has 23 significant bits.\n\n(d) Minimum precision of a subnormal number: 1 bit.\n  The smallest subnormal has fraction = 000...01 (only the last bit is 1), so it has only 1 significant bit.',
+    guide: '**Normalized numbers:** Always have implicit leading 1 + 23 fraction bits = 24 bits of precision. This is constant for ALL normalized numbers.\n\n**Subnormal numbers:** No implicit leading 1. The number of significant bits equals the position of the leading 1 in the fraction.\n- Largest subnormal: 0.11111111111111111111111 × 2^(−126) → 23 significant bits\n- Smallest subnormal: 0.00000000000000000000001 × 2^(−126) → 1 significant bit\n\n**Key insight:** Subnormals trade precision for range (gradual underflow). The further from the normal range, the fewer significant bits.',
+    difficulty: 'medium',
+    tags: ['single-precision', 'precision', 'subnormal', 'normalized', 'tutorial'],
+  },
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────────
 // THEORY / TRUE-FALSE / SHORT ANSWER
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -279,9 +328,48 @@ const theoryQuestions: BankQuestion[] = [
     difficulty: 'medium',
     tags: ['short-answer', 'LU', 'Cholesky', 'least-squares', 'uniqueness'],
   },
+  // ── TUTORIAL 1 Q1 ──
+  {
+    id: 'tut1-th-1',
+    source: 'DSA2102 2526s2 Tutorial 1',
+    qnum: 'Q1',
+    type: 'error_analysis',
+    topic: 'Absolute and relative error of rational approximations of π',
+    question: 'Compute the absolute and relative error in the following rational approximations of π:\n\n(a) 22/7\n(b) 355/113\n(c) 103638/32989',
+    solution: '(a) 22/7:\n  Absolute error = |22/7 − π| ≈ 0.001264489\n  Relative error = |22/7 − π| / |π| ≈ 0.0004025\n\n(b) 355/113:\n  Absolute error = |355/113 − π| ≈ 2.668 × 10^−7\n  Relative error = |355/113 − π| / |π| ≈ 8.491 × 10^−8\n\n(c) 103638/32989:\n  Absolute error = |103638/32989 − π| ≈ 1.494 × 10^−9\n  Relative error = |103638/32989 − π| / |π| ≈ 4.754 × 10^−10',
+    guide: '**Definitions:**\n- Absolute error = |approximation − true value|\n- Relative error = |approximation − true value| / |true value|\n\n**Using π = 3.14159265358979...:**\n\n(a) 22/7 = 3.142857... → |3.142857 − 3.14159| = 0.001265; divide by π for relative.\n(b) 355/113 = 3.14159292... → much smaller error; note 355/113 is famous for being accurate to 6 decimal places.\n(c) 103638/32989 = 3.14159265... → accurate to 9 decimal places.\n\n**Key insight:** Relative error is more meaningful than absolute error for comparing approximations of different magnitudes.',
+    difficulty: 'easy',
+    tags: ['absolute-error', 'relative-error', 'approximation', 'tutorial'],
+  },
+  // ── TUTORIAL 1 Q2 ──
+  {
+    id: 'tut1-th-2',
+    source: 'DSA2102 2526s2 Tutorial 1',
+    qnum: 'Q2',
+    type: 'error_analysis',
+    topic: 'Relative condition number of f(x) = x^p, log(x), e^x',
+    question: 'What is the relative condition number (as a function of x) of evaluating each of the following functions?\n\n(a) f(x) = x^p\n(b) f(x) = log(x)\n(c) f(x) = e^x',
+    solution: '(a) f(x) = x^p:\n  κ = |x f\'(x) / f(x)| = |x · p x^(p−1) / x^p| = |p|\n\n(b) f(x) = log(x):\n  κ = |x f\'(x) / f(x)| = |x · (1/x) / log(x)| = 1/|log(x)|\n\n(c) f(x) = e^x:\n  κ = |x f\'(x) / f(x)| = |x · e^x / e^x| = |x|',
+    guide: '**Relative condition number formula:**\n  κ(x) = |x f\'(x) / f(x)|\n\nThis measures how much a small relative change in x amplifies to a relative change in f(x).\n\n**Derivation:** If x is perturbed to x + δx, then f(x + δx) ≈ f(x) + f\'(x)δx.\nRelative change in output = |f\'(x)δx / f(x)|\nRelative change in input = |δx / x|\nCondition number = ratio = |x f\'(x) / f(x)|\n\n**Interpretation:**\n- f(x) = x^p: condition number = |p| (constant). Well-conditioned for small |p|.\n- f(x) = log(x): condition number = 1/|log(x)|. Ill-conditioned near x = 1 (log(1) = 0 → κ → ∞).\n- f(x) = e^x: condition number = |x|. Ill-conditioned for large |x|.',
+    difficulty: 'medium',
+    tags: ['condition-number', 'relative-condition', 'derivatives', 'tutorial'],
+  },
+  // ── TUTORIAL 1 Q3 ──
+  {
+    id: 'tut1-th-3',
+    source: 'DSA2102 2526s2 Tutorial 1',
+    qnum: 'Q3',
+    type: 'error_analysis',
+    topic: 'Binomial coefficient overflow in decimal machine arithmetic',
+    question: 'Suppose you are working with decimal (base 10) machine numbers of the form ±0.d₁d₂d₃d₄ × 10^d with d ≤ 15.\n\n(a) What is the largest value of n for which C(n,3) can be computed using the definition n!/(k!(n-k)!) without causing overflow?\n\n(b) Show that C(n,k) = (n/k) × C(n-1, k-1) × ... × C(n-k+1, 1).\n\n(c) Using this new recursive definition, what is the largest value of n for which C(n,3) can be computed without overflow?',
+    solution: '(a) The computation overflows as soon as any of n!, k!, or (n-k)! overflows. Since n! is the largest, we need n! ≤ 10^15. Testing: 17! ≈ 3.56 × 10^14 < 10^15 and 18! ≈ 6.40 × 10^15 > 10^15. So the largest n is 17.\n\n(b) By definition:\n  C(n,k) = n! / (k!(n-k)!)\n  = [n × (n-1) × ... × (n-k+1)] / [k × (k-1) × ... × 1]\n  = (n/k) × [(n-1)! / ((k-1)!(n-k)!)]\n  = (n/k) × C(n-1, k-1)\n  Applying recursively: = (n/k) × (n-1)/(k-1) × ... × (n-k+1)/1\n\n(c) For k=3: C(n,3) = n(n-1)(n-2)/6. We need n(n-1)(n-2)/6 ≤ 10^15.\n  Approximating: n^3/6 ≈ 10^15 ⇒ n ≈ (6 × 10^15)^(1/3) ≈ 181712.\n  Checking: 181710 gives ≈ 0.9999 × 10^15 (fits); 181711 overflows.\n  Largest n = 181710.',
+    guide: '**Part (a):** The bottleneck is the largest factorial in the computation. For C(n,3), that is n!. Find the largest n with n! < 10^15 by testing values.\n\n**Part (b):** Factor out one term at a time from the numerator and denominator:\n  n!/(k!(n-k)!) = (n/k) × (n-1)!/((k-1)!(n-k)!) = (n/k) × C(n-1,k-1)\n  Repeat until C(n-k+1, 1) = n-k+1.\n\n**Part (c):** The recursive formula avoids computing large factorials. For k=3:\n  C(n,3) = n(n-1)(n-2)/6\n  This stays below 10^15 for much larger n than the factorial approach (n ≈ 181710 vs n = 17).\n\n**Key lesson:** Reformulating a computation can dramatically extend its range before overflow.',
+    difficulty: 'hard',
+    tags: ['overflow', 'binomial', 'factorial', 'machine-arithmetic', 'tutorial'],
+  },
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────────
 // COMPLEXITY QUESTIONS
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -298,9 +386,61 @@ const complexityQuestions: BankQuestion[] = [
     difficulty: 'medium',
     tags: ['Big-O', 'complexity', 'matrix', 'vector'],
   },
+  // ── TUTORIAL 1 Q8 ──
+  {
+    id: 'tut1-cx-1',
+    source: 'DSA2102 2526s2 Tutorial 1',
+    qnum: 'Q8',
+    type: 'complexity',
+    topic: 'Flop count for computing variance of a vector',
+    question: 'Recall that the mean of a vector x is x̅ = (1/n)Σxᵢ and the variance is σ² = (1/(n-1))Σ(xᵢ - x̅)².\n\nHow many floating point operations does it take to compute the variance of a vector with n components?',
+    solution: 'Computing the mean requires (n-1) additions and 1 division = n operations total.\n\nComputing the variance requires:\n- n subtractions (xᵢ - x̅ for each i)\n- n multiplications (squaring each difference)\n- (n-1) additions (summing the squared differences)\n- 1 subtraction (the n-1 denominator requires subtracting 1 from n)\n- 1 division (dividing by n-1)\n\nTotal for variance: n + n + (n-1) + 1 + 1 = 3n + 1 operations.\n\nGrand total: n + (3n+1) = 4n + 1 floating point operations.',
+    guide: '**Strategy:** Count each arithmetic operation (+, -, ×, ÷) separately.\n\n**Mean computation:**\n- Sum n numbers: (n-1) additions\n- Divide by n: 1 division\n- Subtotal: n operations\n\n**Variance computation (given mean):**\n- Subtract mean from each xᵢ: n subtractions\n- Square each (xᵢ - x̅): n multiplications\n- Sum n squares: (n-1) additions\n- Divide by (n-1): 1 division\n- Subtotal: 3n operations\n\n**Total: n + 3n + 1 = 4n + 1 flops**\n\n**Note:** The “+1” comes from the division at the end. For large n, this is O(n).',
+    difficulty: 'easy',
+    tags: ['flop-count', 'variance', 'mean', 'tutorial'],
+  },
+  // ── TUTORIAL 2 Q1 ──
+  {
+    id: 'tut2-cx-1',
+    source: 'DSA2102 2526s2 Tutorial 2',
+    qnum: 'Q1',
+    type: 'complexity',
+    topic: 'Comparing (xxT)A vs x(xTA): operation count',
+    question: 'Consider a vector x ∈ R^n and an n×n matrix A. Compare the cost of the following two computations:\n\n(a) (xxT)A\n(b) x(xTA)',
+    solution: '(a) (xxT)A:\n  Step 1: Compute xxT. This is an outer product: n² multiplications = n² operations.\n  Step 2: Multiply (n×n) matrix xxT by (n×n) matrix A: n²(2n-1) operations.\n  Total: n² + n²(2n-1) = n² + 2n³ - n² = 2n³ operations.\n\n(b) x(xTA):\n  Step 1: Compute xTA. This is a row vector times a matrix: n(2n-1) operations.\n  Step 2: Multiply column vector x (n× 1) by row vector xTA (1×n): n² operations.\n  Total: n(2n-1) + n² = 2n² - n + n² = 3n² - n operations.\n\nConclusion: (b) is far cheaper — O(n²) vs O(n³). Always prefer x(xTA) over (xxT)A.',
+    guide: '**Key principle:** Exploit associativity to avoid forming large intermediate matrices.\n\n**Outer product xxT:** Creates an n×n matrix from two vectors. Cost: n² multiplications.\n**Matrix-matrix product:** n×n times n×n costs O(n³).\n**Matrix-vector product:** n×n times n×1 costs O(n²).\n\n**Rule:** When you have a product involving vectors and matrices, group vectors together first to reduce intermediate dimensions.\n\n**General principle:** (xxT)A creates an n×n intermediate; x(xTA) only creates an n×1 intermediate. The second approach is always O(n²) cheaper.',
+    difficulty: 'medium',
+    tags: ['matrix-vector', 'outer-product', 'associativity', 'efficiency', 'tutorial'],
+  },
+  // ── TUTORIAL 2 Q3 ──
+  {
+    id: 'tut2-cx-2',
+    source: 'DSA2102 2526s2 Tutorial 2',
+    qnum: 'Q3',
+    type: 'complexity',
+    topic: 'Flop count for computing A = LU (triangular matrix product)',
+    question: 'Let L = (ℓᵢⱼ)ₙ×ₙ be a lower triangular matrix and U = (uᵢⱼ)ₙ×ₙ be an upper triangular matrix. Determine the number of floating point operations needed to compute A = LU.',
+    solution: 'For each entry Aᵢⱼ = Σₖ Lᵢₖ Uₖⱼ, the sum only runs over k from 1 to min(i,j) (since L is lower triangular: Lᵢₖ = 0 for k > i; U is upper triangular: Uₖⱼ = 0 for k > j).\n\nFor the (i,j) entry:\n- If i ≤ j: sum runs k = 1 to i, requiring i multiplications and (i-1) additions = 2i-1 operations.\n- If i > j: sum runs k = 1 to j, requiring j multiplications and (j-1) additions = 2j-1 operations.\n\nTotal operations = Σᵢⱼ (2min(i,j)-1)\n\nSumming over all columns j:\n- Column j: first j-1 entries (i < j) each cost 2i-1; entries j to n each cost 2j-1.\n- This gives: Σⱼ[Σᵢ<ⱼ(2i-1) + Σᵢ≥ⱼ(2j-1)]\n\nAfter careful summation: Total = (2n³ + n) / 3 ≈ 2n³/3.',
+    guide: '**Key insight:** Because L is lower triangular and U is upper triangular, the dot product for entry (i,j) only has min(i,j) nonzero terms.\n\n**Counting approach:**\n- For entry (i,j) with i ≤ j: need i multiplications + (i-1) additions = 2i-1 ops\n- For entry (i,j) with i > j: need j multiplications + (j-1) additions = 2j-1 ops\n\n**Summing by column j:**\n- Entries above diagonal (i < j): costs 2i-1 each\n- Entries on/below diagonal (i ≥ j): costs 2j-1 each\n\n**Result:** Total = 2n³/3 + O(n²) ≈ 2n³/3\n\n**Compare:** Dense matrix multiply costs 2n³ - n² ≈ 2n³. Triangular structure saves a factor of 3.',
+    difficulty: 'hard',
+    tags: ['flop-count', 'triangular', 'LU', 'matrix-multiply', 'tutorial'],
+  },
+  // ── TUTORIAL 2 Q4 ──
+  {
+    id: 'tut2-cx-3',
+    source: 'DSA2102 2526s2 Tutorial 2',
+    qnum: 'Q4',
+    type: 'complexity',
+    topic: 'Flop count for A×B where B is tridiagonal',
+    question: 'Let A = (aᵢⱼ)ₙ×ₙ be an arbitrary n×n matrix and B = (bᵢⱼ)ₙ×ₙ be an n×n tridiagonal matrix (B(i,j) = 0 if |i-j| > 1). Determine the number of floating point operations needed to compute M = AB.',
+    solution: 'Since B is tridiagonal, column j of B has at most 3 nonzero entries (rows j-1, j, j+1), except for the first and last columns which have only 2.\n\nFor each entry Mᵢⱼ = Σₖ Aᵢₖ Bₖⱼ:\n- First column (j=1): 2 nonzero entries in B → 2 multiplications + 1 addition = 3 ops per row → 3n total\n- Last column (j=n): 2 nonzero entries in B → 3n total\n- Middle columns (j=2,...,n-1): 3 nonzero entries in B → 3 multiplications + 2 additions = 5 ops per row → 5n each\n\nTotal = 3n + 3n + 5n(n-2) = 6n + 5n² - 10n = 5n² - 4n.',
+    guide: '**Key insight:** Exploit the sparsity of B. Instead of computing all n² entries of B with full dot products, use only the nonzero entries.\n\n**Tridiagonal structure:** Column j of B has nonzeros only at rows max(1,j-1) to min(n,j+1).\n- Interior columns: 3 nonzeros → 3 mults + 2 adds = 5 ops per entry of M\n- First/last columns: 2 nonzeros → 2 mults + 1 add = 3 ops per entry of M\n\n**Counting:**\n- 2 boundary columns × n rows × 3 ops = 6n\n- (n-2) interior columns × n rows × 5 ops = 5n(n-2)\n- Total = 6n + 5n² - 10n = 5n² - 4n\n\n**Compare:** Dense AB costs 2n³ - n² ≈ 2n³. Tridiagonal B reduces this to O(n²).',
+    difficulty: 'medium',
+    tags: ['flop-count', 'tridiagonal', 'sparse', 'matrix-multiply', 'tutorial'],
+  },
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────────
 // GAUSSIAN ELIMINATION QUESTIONS
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -329,9 +469,61 @@ const gaussianEliminationQuestions: BankQuestion[] = [
     difficulty: 'easy',
     tags: ['matrix-inverse', 'LU', 'efficiency'],
   },
+  // ── TUTORIAL 2 Q2 ──
+  {
+    id: 'tut2-ge-1',
+    source: 'DSA2102 2526s2 Tutorial 2',
+    qnum: 'Q2',
+    type: 'conditioning_linear',
+    topic: 'Inverse and condition number of bidiagonal matrix Dn',
+    question: 'Consider the n×n bidiagonal matrix Dn with 1s on the diagonal and -2s on the superdiagonal.\n\n(a) Write out D2⁻¹\n(b) Write out D3⁻¹\n(c) Find a general expression for Dn⁻¹\n(d) Using the ∞-norm, find the condition number of Dn\n(e) Using the 1-norm, find the condition number of Dn',
+    solution: '(a) D2⁻¹ = [[1, 2], [0, 1]]\n\n(b) D3⁻¹ = [[1, 2, 4], [0, 1, 2], [0, 0, 1]]\n\n(c) General formula: Dn⁻¹ is upper triangular with (Dn⁻¹)ᵢⱼ = 2^(j-i) for j ≥ i, and 0 for j < i.\n  That is, the (i,j) entry is 2^(j-i) for j ≥ i.\n\n(d) ∞-norm condition number:\n  ‖Dn‖∞ = max row sum = max(|1| + |-2|, |1|) = 3 (first n-1 rows have sum 3, last row has sum 1)\n  ‖Dn⁻¹‖∞ = max row sum = row 1 = 1 + 2 + 4 + ... + 2^(n-1) = 2^n - 1\n  κ∞(Dn) = 3(2^n - 1)\n\n(e) 1-norm condition number:\n  ‖Dn‖1 = max column sum = max(|1|, |-2| + |1|) = 3\n  ‖Dn⁻¹‖1 = max column sum = last column = 2^(n-1) + 2^(n-2) + ... + 1 = 2^n - 1\n  κ₁(Dn) = 3(2^n - 1)',
+    guide: '**Finding Dn⁻¹:** Solve Dn X = I column by column using back substitution.\n  For each column eⱼ of I, solve Dn x = eⱼ.\n  Since Dn is upper triangular, use back substitution starting from the last row.\n\n**Pattern recognition:** After computing D2⁻¹ and D3⁻¹, notice the entries are powers of 2.\n  (Dn⁻¹)ᵢⱼ = 2^(j-i) for j ≥ i.\n\n**∞-norm:** ‖A‖∞ = max row sum of |A|.\n  - Dn: rows 1 to n-1 have entries [1, -2] → sum = 3; row n has [1] → sum = 1. So ‖Dn‖∞ = 3.\n  - Dn⁻¹: row 1 has entries 1, 2, 4, ..., 2^(n-1) → sum = 2^n - 1. So ‖Dn⁻¹‖∞ = 2^n - 1.\n\n**1-norm:** ‖A‖1 = max column sum of |A|.\n  - Dn: column 1 has [1] → sum = 1; columns 2 to n have [-2, 1] → sum = 3. So ‖Dn‖1 = 3.\n  - Dn⁻¹: last column has 2^(n-1), 2^(n-2), ..., 1 → sum = 2^n - 1.\n\n**Key takeaway:** κ grows exponentially with n — Dn becomes increasingly ill-conditioned.',
+    difficulty: 'hard',
+    tags: ['condition-number', 'matrix-inverse', 'norms', 'bidiagonal', 'tutorial'],
+  },
+  // ── TUTORIAL 2 Q5 ──
+  {
+    id: 'tut2-ge-2',
+    source: 'DSA2102 2526s2 Tutorial 2',
+    qnum: 'Q5',
+    type: 'gaussian_elimination',
+    topic: 'Determine singularity of matrices via Gaussian elimination',
+    question: 'Determine whether the following matrices are singular:\n\n(a) A = [[1,2,3,4],[2,4,-1,1],[-3,2,0,1],[0,5,10,6]]\n\n(b) B = [[0,1,3,4,6],[2,2,3,5,7],[4,2,0,3,8],[8,3,2,3,9],[16,5,1,3,18]]',
+    solution: '(a) Apply Gaussian elimination (with row swaps as needed):\n  After elimination, the resulting upper triangular matrix is:\n  [[1,2,3,4], [0,8,9,13], [0,0,-7,-7], [0,0,0,-13/2]]\n  All diagonal entries are nonzero, so the matrix is NONSINGULAR.\n\n(b) Apply Gaussian elimination (with row swaps as needed):\n  After elimination, the resulting matrix has a row of all zeros:\n  [[2,2,3,5,7], [0,1,3,4,6], [0,0,5,3,11], [0,0,0,1,6], [0,0,0,0,0]]\n  The last row is all zeros, so the matrix is SINGULAR.',
+    guide: '**Method:** Apply Gaussian elimination (with partial pivoting if needed). The matrix is singular if and only if a zero pivot is encountered (i.e., a zero appears on the diagonal of U after elimination).\n\n**Equivalently:** A square matrix is singular ↺ det(A) = 0 ↺ rank(A) < n ↺ the rows/columns are linearly dependent.\n\n**For (a):** After elimination, all 4 pivots are nonzero → nonsingular.\n\n**For (b):** After elimination, the 5th row becomes all zeros → rank = 4 < 5 → singular.\n\n**Tip:** When checking singularity, you only need to determine if a zero pivot appears, not compute the full solution.',
+    difficulty: 'medium',
+    tags: ['singularity', 'Gaussian-elimination', 'rank', 'pivot', 'tutorial'],
+  },
+  // ── TUTORIAL 2 Q6 ──
+  {
+    id: 'tut2-ge-3',
+    source: 'DSA2102 2526s2 Tutorial 2',
+    qnum: 'Q6',
+    type: 'gaussian_elimination',
+    topic: 'Gaussian elimination (keeping multipliers) and back substitution',
+    question: 'Consider the linear systems represented by the following augmented matrices. Write down the augmented matrix after each elimination step WITHOUT zeroing the eliminated coefficients (keep multipliers in place). Then find the solution.\n\n(a) [1,1,0,1|2; 2,1,-1,1|1; 3,-1,-1,2|-3; -1,2,3,-1|4]\n\n(b) [1,1,-1,1,-1|-1; 3,1,-3,-2,3|-6; 2,2,1,-1,1|7; 4,1,-1,4,-5|-7; 16,-1,1,9,-1|8]',
+    solution: '(a) Gaussian elimination steps:\n  Multipliers: m21=2, m31=3, m41=-1\n  After step 1: [1,1,0,1|2; 2,-1,-1,-1|-3; 3,-4,-1,-1|-9; -1,3,3,0|6]\n  Multipliers: m32=4, m42=-3\n  After step 2: [1,1,0,1|2; 2,-1,-1,-1|-3; 3,-4,3,3|3; -1,3,0,-3|-3]\n  Multiplier: m43=0\n  After step 3: [1,1,0,1|2; 2,-1,-1,-1|-3; 3,-4,3,3|3; -1,3,0,-3|-3]\n  Back substitution: x = (-1, 2, 0, 1)T\n\n(b) After full elimination, back substitution gives x = (-1, 3, 3, 3, 3)T',
+    guide: '**Key technique:** Keep the multipliers in the lower triangle (do NOT zero them out). This gives you the L matrix of the LU factorization simultaneously.\n\n**Elimination step k:** For each row i > k:\n  1. Compute multiplier: mᵢₖ = aᵢₖ / aₖₖ\n  2. Update row i: row i ← row i - mᵢₖ × row k\n  3. Write mᵢₖ in position (i,k) instead of 0\n\n**Back substitution (from last row up):**\n  xᵢ = (bᵢ - Σⱼ>ᵢ Uᵢⱼ xⱼ) / Uᵢᵢ\n\n**Tip for (a):** After elimination, you should have an upper triangular system. Solve from x4 upward.',
+    difficulty: 'hard',
+    tags: ['Gaussian-elimination', 'multipliers', 'back-substitution', 'LU', 'tutorial'],
+  },
+  // ── TUTORIAL 2 Q7 ──
+  {
+    id: 'tut2-ge-4',
+    source: 'DSA2102 2526s2 Tutorial 2',
+    qnum: 'Q7',
+    type: 'gaussian_elimination',
+    topic: 'Gaussian elimination with partial pivoting (5×5 system)',
+    question: 'Apply Gaussian elimination with partial pivoting to solve the linear system represented by the following augmented matrix:\n\n[0,0,2,3,4|-3; 0,1,-7,2,3|-2; 1,4,1,1,1|0; 0,0,1,0,2|0; 0,0,1,7,3|-7]',
+    solution: 'Step 1: Find largest entry in column 1. Row 3 has pivot 1. Swap rows 1 and 3:\n  [1,4,1,1,1|0; 0,1,-7,2,3|-2; 0,0,2,3,4|-3; 0,0,1,0,2|0; 0,0,1,7,3|-7]\n\nStep 2: Column 2 already has pivot 1 in row 2. No swap needed. Eliminate below (no entries to eliminate).\n\nStep 3: Column 3. Pivot is 2 in row 3. Eliminate rows 4 and 5:\n  m43 = 1/2, m53 = 1/2\n  Row 4 ← row 4 - (1/2)row3: [0,0,0,-3/2,0|3/2]\n  Row 5 ← row 5 - (1/2)row3: [0,0,0,11/2,1|-11/2]\n\nStep 4: Column 4. Largest is 11/2 in row 5. Swap rows 4 and 5:\n  [1,4,1,1,1|0; 0,1,-7,2,3|-2; 0,0,2,3,4|-3; 0,0,0,11/2,1|-11/2; 0,0,0,-3/2,0|3/2]\n  Eliminate row 5: m54 = (-3/2)/(11/2) = -3/11\n  Row 5 ← row 5 - (-3/11)row4: [0,0,0,0,3/11|0]\n\nBack substitution: x5=0, x4=-1, x3=0, x2=0, x1=1\nSolution: x = (1, 0, 0, -1, 0)T',
+    guide: '**Partial pivoting algorithm:** At each step k, before eliminating:\n  1. Find the row i ≥ k with the largest |aᵢₖ|\n  2. Swap rows i and k\n  3. Proceed with elimination\n\n**Why partial pivoting?** Ensures |multiplier| ≤ 1, improving numerical stability.\n\n**Tracking row swaps:** Keep a permutation vector P. Each swap updates P.\n\n**Back substitution:** After obtaining upper triangular form, solve from last row upward:\n  x5 = b5/U55\n  x4 = (b4 - U45 x5)/U44\n  ... and so on.',
+    difficulty: 'hard',
+    tags: ['partial-pivoting', 'Gaussian-elimination', 'row-swap', 'back-substitution', 'tutorial'],
+  },
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────────
 // LU FACTORIZATION QUESTIONS
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -396,9 +588,61 @@ const luFactorizationQuestions: BankQuestion[] = [
     difficulty: 'medium',
     tags: ['LU', '3x3', 'numerical'],
   },
+  // ── TUTORIAL 3 Q1 ──
+  {
+    id: 'tut3-lu-1',
+    source: 'DSA2102 2526s2 Tutorial 3',
+    qnum: 'Q1',
+    type: 'lu_factorization',
+    topic: 'Conditions on α, β, γ for LU factorization to exist without row swaps',
+    question: 'For what values of α does A = [[α,1,2],[2,2,0],[0,1,1]] have an LU factorization (without row swaps)?\n\nFor what values of β does B = [[1,1,2],[2,β,0],[0,1,1]] have an LU factorization (without row swaps)?\n\nFor what values of γ does C = [[1,1,2],[2,3,0],[0,1,γ]] have an LU factorization (without row swaps)?',
+    solution: 'For A: LU factorization without row swaps requires all leading principal submatrices to be nonsingular (all pivots nonzero).\n  - Pivot 1: α ≠ 0\n  - After eliminating column 1 (m21 = 2/α): new (2,2) entry = 2 - 2/α = (2α-2)/α. Need this ≠ 0: α ≠ 1.\n  - Pivot 3 is always nonzero given pivots 1 and 2 are nonzero.\n  Answer: α ≠ 0 and α ≠ 1.\n\nFor B: \n  - Pivot 1 = 1 ≠ 0 ✓\n  - After step 1 (m21 = 2): new (2,2) = β - 2. Need β - 2 ≠ 0: β ≠ 2.\n  Answer: β ≠ 2.\n\nFor C:\n  - Pivot 1 = 1 ≠ 0 ✓\n  - After step 1 (m21 = 2): new (2,2) = 3 - 2 = 1 ≠ 0 ✓\n  - After step 2 (m32 = 1/1 = 1): new (3,3) = γ - 0 - 1×0 = γ. Wait, let\'s recompute:\n    Row 3 after step 1: [0, 1, γ]. After step 2 (m32 = 1): [0, 0, γ - 0] = [0, 0, γ].\n    Actually m32 = 1/1 = 1; row 3 ← row 3 - 1×row 2 = [0, 1-1, γ-0] = [0, 0, γ].\n    Pivot 3 = γ. No restriction needed since γ can be anything (even 0 would just make C singular, but the LU factorization still exists as a formal decomposition).\n  Answer: No restriction on γ (LU factorization exists for all γ).',
+    guide: '**LU factorization without row swaps exists ⇔ all pivots are nonzero ⇔ all leading principal submatrices are nonsingular.**\n\n**Algorithm to find conditions:**\n1. Perform Gaussian elimination symbolically (keeping parameters)\n2. At each step, the pivot must be nonzero\n3. Set each pivot ≠ 0 to find the conditions on the parameter\n\n**For A:** Pivot 1 = α ≠ 0. After eliminating: pivot 2 = 2 - 2/α = 2(α-1)/α ≠ 0 ⇒ α ≠ 1.\n\n**For B:** Pivot 1 = 1 (always OK). Pivot 2 = β - 2 ≠ 0 ⇒ β ≠ 2.\n\n**For C:** Pivots 1 and 2 are always nonzero. Pivot 3 = γ (any value, even 0, doesn\'t prevent the LU factorization from existing as a formal decomposition).',
+    difficulty: 'medium',
+    tags: ['LU', 'pivot', 'conditions', 'existence', 'tutorial'],
+  },
+  // ── TUTORIAL 3 Q2 ──
+  {
+    id: 'tut3-lu-2',
+    source: 'DSA2102 2526s2 Tutorial 3',
+    qnum: 'Q2',
+    type: 'lu_factorization',
+    topic: 'LU factorization of A = [[2,4,5],[3,1,0],[4,-2,2]]',
+    question: 'Compute the LU factorization of the matrix A = [[2,4,5],[3,1,0],[4,-2,2]].',
+    solution: 'Step 1: Pivot = 2. Multipliers: m21 = 3/2, m31 = 4/2 = 2.\n  Row 2 ← row 2 - (3/2)row 1: [3-3, 1-6, 0-15/2] = [0, -5, -15/2]\n  Row 3 ← row 3 - 2×row 1: [4-4, -2-8, 2-10] = [0, -10, -8]\n\nStep 2: Pivot = -5. Multiplier: m32 = -10/(-5) = 2.\n  Row 3 ← row 3 - 2×row 2: [0, -10+10, -8+15] = [0, 0, 7]\n\nL = [[1, 0, 0], [3/2, 1, 0], [2, 2, 1]]\nU = [[2, 4, 5], [0, -5, -15/2], [0, 0, 7]]',
+    guide: '**Standard LU algorithm:**\n\nStep 1 (eliminate column 1):\n- m21 = a21/a11 = 3/2\n- m31 = a31/a11 = 4/2 = 2\n- Row 2 ← Row 2 - (3/2) × Row 1\n- Row 3 ← Row 3 - 2 × Row 1\n\nStep 2 (eliminate column 2):\n- m32 = new_a32/new_a22 = -10/(-5) = 2\n- Row 3 ← Row 3 - 2 × Row 2\n\n**Collect results:**\n- L: 1s on diagonal, multipliers below (m21=3/2, m31=2, m32=2)\n- U: the resulting upper triangular matrix\n\n**Verify:** Multiply L × U and check you recover A.',
+    difficulty: 'medium',
+    tags: ['LU', '3x3', 'numerical', 'tutorial'],
+  },
+  // ── TUTORIAL 3 Q3 ──
+  {
+    id: 'tut3-lu-3',
+    source: 'DSA2102 2526s2 Tutorial 3',
+    qnum: 'Q3',
+    type: 'lu_factorization',
+    topic: 'LU factorization of M and solving Mx=b via forward/back substitution',
+    question: 'Consider the matrix M = [[2,1,1],[4,5,2],[2,-2,0]].\n\n(a) Compute the LU factorization of M.\n(b) Let b = (1,2,2)T. Solve Ly = b (forward substitution), then solve Ux = y (back substitution).\n(c) What is the solution to Mx = b?',
+    solution: '(a) Step 1: m21 = 4/2 = 2, m31 = 2/2 = 1.\n  Row 2 ← row 2 - 2×row 1: [0, 3, 0]\n  Row 3 ← row 3 - 1×row 1: [0, -3, -1]\n  Step 2: m32 = -3/3 = -1.\n  Row 3 ← row 3 - (-1)×row 2: [0, 0, -1]\n\n  L = [[1,0,0],[2,1,0],[1,-1,1]], U = [[2,1,1],[0,3,0],[0,0,-1]]\n\n(b) Forward substitution Ly = b = (1,2,2)T:\n  y1 = 1\n  y2 = 2 - 2(1) = 0\n  y3 = 2 - 1(1) - (-1)(0) = 1\n  y = (1, 0, 1)T\n\n  Back substitution Ux = y = (1,0,1)T:\n  x3 = 1/(-1) = -1\n  x2 = 0/3 = 0\n  x1 = (1 - 1(0) - 1(-1))/2 = 2/2 = 1\n  x = (1, 0, -1)T\n\n(c) Solution: x = (1, 0, -1)T',
+    guide: '**This is the same as lu-1 in the existing bank — see that entry for the full guide.**\n\n**Key steps:**\n1. LU factorization: compute multipliers, update rows, collect L and U\n2. Forward substitution (Ly = b): work top to bottom, yᵢ = bᵢ - Σⱼ<ᵢ Lᵢⱼ yⱼ\n3. Back substitution (Ux = y): work bottom to top, xᵢ = (yᵢ - Σⱼ>ᵢ Uᵢⱼ xⱼ) / Uᵢᵢ\n4. Solution to Mx = b is the same x from step 3.',
+    difficulty: 'medium',
+    tags: ['LU', 'forward-substitution', 'back-substitution', 'tutorial'],
+  },
+  // ── TUTORIAL 3 Q4 ──
+  {
+    id: 'tut3-lu-4',
+    source: 'DSA2102 2526s2 Tutorial 3',
+    qnum: 'Q4',
+    type: 'lu_factorization',
+    topic: 'PA = LU factorization with partial pivoting (4×4)',
+    question: 'Compute the PA = LU factorization of the matrix:\nA = [[1,2,-1,0],[2,4,-2,-1],[-3,-5,6,1],[-1,2,8,-2]]',
+    solution: 'Making only necessary pivots:\n\nStep 1: Pivot = 1 (no swap needed). Multipliers: m21=2, m31=-3, m41=-1.\n  After step 1: [[1,2,-1,0],[0,0,0,-1],[0,1,3,1],[0,4,7,-2]]\n\nStep 2: Column 2 pivot is 0 in row 2. Swap rows 2 and 4 (or 2 and 3).\n  Using row 4 as pivot (value 4): swap rows 2 and 4.\n  After swap: [[1,2,-1,0],[0,4,7,-2],[0,1,3,1],[0,0,0,-1]]\n  Multiplier: m32 = 1/4.\n  After step 2: [[1,2,-1,0],[0,4,7,-2],[0,0,5/4,3/2],[0,0,0,-1]]\n\nP = [[1,0,0,0],[0,0,0,1],[0,1,0,0],[0,0,1,0]]\nL = [[1,0,0,0],[-1,1,0,0],[-3,1/4,1,0],[2,0,0,1]]\nU = [[1,2,-1,0],[0,4,7,-2],[0,0,5/4,3/2],[0,0,0,-1]]\n\n(With full partial pivoting, different valid answers are possible.)',
+    guide: '**PA = LU with partial pivoting:**\n\nAt each step k:\n1. Find the row i ≥ k with the largest |aᵢₖ| in column k\n2. If i ≠ k, swap rows i and k (record this swap in P)\n3. Compute multipliers and eliminate\n\n**Permutation matrix P:** Start with P = I. Each row swap corresponds to swapping the same rows in P.\n\n**Result:** PA = LU, where P records all the row swaps.\n\n**Note:** Multiple valid answers exist depending on which swaps are made. The key requirement is that |multipliers| ≤ 1.',
+    difficulty: 'hard',
+    tags: ['PA=LU', 'partial-pivoting', '4x4', 'permutation', 'tutorial'],
+  },
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────────
 // CHOLESKY FACTORIZATION QUESTIONS
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -451,9 +695,61 @@ const choleskyQuestions: BankQuestion[] = [
     difficulty: 'hard',
     tags: ['Cholesky', 'QR', 'relationship', 'BᵀB'],
   },
+  // ── TUTORIAL 3 Q5 ──
+  {
+    id: 'tut3-ch-1',
+    source: 'DSA2102 2526s2 Tutorial 3',
+    qnum: 'Q5',
+    type: 'cholesky',
+    topic: 'Determine if symmetric matrices are positive definite',
+    question: 'Determine if the following symmetric matrices are positive-definite:\n\n(a) A = [[1,3],[3,10]]\n\n(b) B = [[1,2],[2,2]]',
+    solution: '(a) A = [[1,3],[3,10]]:\n  Method 1 (Sylvester\'s criterion): Check all leading principal minors.\n  - Minor 1: det([1]) = 1 > 0 ✓\n  - Minor 2: det([[1,3],[3,10]]) = 10 - 9 = 1 > 0 ✓\n  Both minors positive ⇒ A is POSITIVE DEFINITE.\n\n(b) B = [[1,2],[2,2]]:\n  - Minor 1: det([1]) = 1 > 0 ✓\n  - Minor 2: det([[1,2],[2,2]]) = 2 - 4 = -2 < 0 ✗\n  Minor 2 is negative ⇒ B is NOT positive definite.',
+    guide: '**Sylvester\'s Criterion:** A symmetric matrix is positive definite ⇔ all leading principal minors are positive.\n\n**Leading principal minors of an n×n matrix:**\n- D1 = a11\n- D2 = det([[a11,a12],[a21,a22]])\n- D3 = det(top-left 3×3 submatrix)\n- ...\n- Dn = det(A)\n\n**For 2×2 matrix [[a,b],[b,d]]:**\n- D1 = a > 0\n- D2 = ad - b² > 0\n\n**Alternative methods:**\n1. Check all eigenvalues > 0\n2. Attempt Cholesky factorization (succeeds ⇔ SPD)\n3. Check xTAx > 0 for all nonzero x',
+    difficulty: 'easy',
+    tags: ['SPD', 'positive-definite', 'Sylvester', 'determinant', 'tutorial'],
+  },
+  // ── TUTORIAL 3 Q6 ──
+  {
+    id: 'tut3-ch-2',
+    source: 'DSA2102 2526s2 Tutorial 3',
+    qnum: 'Q6',
+    type: 'cholesky',
+    topic: 'LU factorization, SPD verification, Cholesky, and LU-Cholesky relationship',
+    question: 'Consider the matrix M = [[1,2,-1],[2,6,0],[-1,0,9]].\n\n(a) Compute the LU factorization of M.\n(b) Verify that M is positive definite.\n(c) Compute the Cholesky factorization of M.\n(d) What relationship, if any, holds between the LU factors and the Cholesky factors?',
+    solution: '(a) LU factorization:\n  m21 = 2/1 = 2, m31 = -1/1 = -1.\n  After step 1: [[1,2,-1],[0,2,2],[0,2,8]]\n  m32 = 2/2 = 1.\n  After step 2: [[1,2,-1],[0,2,2],[0,0,6]]\n  L = [[1,0,0],[2,1,0],[-1,1,1]], U = [[1,2,-1],[0,2,2],[0,0,6]]\n\n(b) Verify positive definite: All leading principal minors must be positive.\n  D1 = 1 > 0 ✓\n  D2 = det([[1,2],[2,6]]) = 6 - 4 = 2 > 0 ✓\n  D3 = det(M) = 1(54-0) - 2(18-0) + (-1)(0+6) = 54 - 36 - 6 = 12 > 0 ✓\n  All minors positive ⇒ M is positive definite.\n\n(c) Cholesky factorization M = CCT:\n  C11 = sqrt(1) = 1\n  C21 = 2/1 = 2, C31 = -1/1 = -1\n  C22 = sqrt(6 - 4) = sqrt(2)\n  C32 = (0 - (-1)(2))/sqrt(2) = 2/sqrt(2) = sqrt(2)\n  C33 = sqrt(9 - 1 - 2) = sqrt(6)\n  C = [[1,0,0],[2,sqrt(2),0],[-1,sqrt(2),sqrt(6)]]\n\n(d) Relationship: C = L × sqrt(D), where D = diag(U11, U22, U33) = diag(1, 2, 6).\n  Specifically: C = L × diag(1, sqrt(2), sqrt(6)).\n  This follows from A = LU = L(DLT) = (LD^(1/2))(D^(1/2)LT) = CCT.',
+    guide: '**Part (a):** Standard LU factorization.\n\n**Part (b):** Use Sylvester\'s criterion: check all leading principal minors > 0. Alternatively, note that all diagonal entries of U are positive (1, 2, 6 > 0), which also implies SPD.\n\n**Part (c):** Cholesky algorithm (column by column):\n  Cjj = sqrt(Ajj - sum of C^2 in row j up to column j-1)\n  Cij = (Aij - sum of Cik*Cjk for k < j) / Cjj\n\n**Part (d):** The key relationship for SPD matrices:\n  A = LU = L(DLT) where D = diag(U)\n  A = (LD^(1/2))(D^(1/2)LT) = CCT\n  So C = L × D^(1/2) (multiply each column of L by the square root of the corresponding diagonal entry of U).',
+    difficulty: 'hard',
+    tags: ['LU', 'Cholesky', 'SPD', 'relationship', 'tutorial'],
+  },
+  // ── TUTORIAL 3 Q7 ──
+  {
+    id: 'tut3-ch-3',
+    source: 'DSA2102 2526s2 Tutorial 3',
+    qnum: 'Q7',
+    type: 'cholesky',
+    topic: 'Solve Ax=b using Cholesky factorization',
+    question: 'Solve the following systems by finding the Cholesky factorization of the coefficient matrix. Verify symmetry and positive definiteness first.\n\n(a) [[1,-1],[-1,5]] x = [3,-7]T\n\n(b) [[4,-2,0],[-2,2,-1],[0,-1,5]] x = [0,3,-7]T',
+    solution: '(a) A = [[1,-1],[-1,5]]:\n  Symmetric: yes (A = AT). \n  SPD check: D1 = 1 > 0, D2 = 5 - 1 = 4 > 0. Positive definite.\n  Cholesky: L11 = 1, L21 = -1, L22 = sqrt(5-1) = 2.\n  L = [[1,0],[-1,2]]\n  Solve Ly = b = [3,-7]T:\n    y1 = 3, y2 = (-7 - (-1)(3))/2 = (-7+3)/2 = -2.\n    y = [3,-2]T\n  Solve LTx = y = [3,-2]T:\n    x2 = -2/2 = -1, x1 = (3 - (-1)(-1))/1 = 3-1 = 2.\n    x = [2,-1]T\n\n(b) A = [[4,-2,0],[-2,2,-1],[0,-1,5]]:\n  Symmetric: yes. SPD check: D1=4>0, D2=8-4=4>0, D3=4(10-1)+2(-10-0)+0=36-20=16>0.\n  Cholesky: L11=2, L21=-1, L31=0, L22=sqrt(2-1)=1, L32=-1/1=-1, L33=sqrt(5-0-1)=2.\n  L = [[2,0,0],[-1,1,0],[0,-1,2]]\n  Solve Ly = [0,3,-7]T:\n    y1=0, y2=3-(-1)(0)=3, y3=(-7-0(-1)(3))/2... actually: y3=(-7-0-(-1)(3))/2=(-7+3)/2=-2.\n    y = [0,3,-2]T\n  Solve LTx = [0,3,-2]T:\n    x3=-2/2=-1, x2=(3-(-1)(-1))/1=2, x1=(0-(-1)(2))/2=1.\n    x = [1,2,-1]T',
+    guide: '**Cholesky solve procedure:**\n1. Verify A is symmetric (A = AT)\n2. Verify A is positive definite (Sylvester\'s criterion or attempt Cholesky)\n3. Compute Cholesky: A = LLT\n4. Solve Ly = b (forward substitution)\n5. Solve LTx = y (back substitution)\n\n**Forward substitution (Ly = b):**\n  yi = (bi - sum of Lij*yj for j < i) / Lii\n\n**Back substitution (LTx = y):**\n  xi = (yi - sum of Lji*xj for j > i) / Lii\n  (Note: LT has Lji in position (i,j), so the sum uses column i of L below the diagonal)',
+    difficulty: 'medium',
+    tags: ['Cholesky', 'solve', 'forward-substitution', 'back-substitution', 'SPD', 'tutorial'],
+  },
+  // ── TUTORIAL 3 Q8 ──
+  {
+    id: 'tut3-ch-4',
+    source: 'DSA2102 2526s2 Tutorial 3',
+    qnum: 'Q8',
+    type: 'cholesky',
+    topic: 'LU, LDR, column factorization, and Cholesky of a 4×4 matrix',
+    question: 'Consider the matrix A = [[4,-2,2,2],[-2,2,-4,-3],[2,-4,14,3],[2,-3,3,10]].\n\n(a) Compute the LU factorization of A.\n(b) Find diagonal D so that A = LDR (L lower triangular unit diagonal, R upper triangular unit diagonal, DR = U).\n(c) Using column operations, factor A = WR (W lower triangular, R upper triangular unit diagonal).\n(d) Find diagonal D so that A = LDR (LD = W from part c).\n(e) Compute the Cholesky factorization of A.\n(f) Compute the Cholesky factorization using row operations instead.',
+    solution: '(a) LU factorization:\n  m21=-1/2, m31=1/2, m41=1/2.\n  After step 1: [[4,-2,2,2],[0,1,-3,-2],[0,-3,13,2],[0,-2,2,9]]\n  m32=-3, m42=-2.\n  After step 2: [[4,-2,2,2],[0,1,-3,-2],[0,0,4,-4],[0,0,-4,5]]\n  m43=-1.\n  After step 3: [[4,-2,2,2],[0,1,-3,-2],[0,0,4,-4],[0,0,0,1]]\n  L = [[1,0,0,0],[-1/2,1,0,0],[1/2,-3,1,0],[1/2,-2,-1,1]]\n  U = [[4,-2,2,2],[0,1,-3,-2],[0,0,4,-4],[0,0,0,1]]\n\n(b) D = diag(4,1,4,1), R = D^(-1)U = [[1,-1/2,1/2,1/2],[0,1,-3,-2],[0,0,1,-1],[0,0,0,1]]\n\n(c) Column operations give W = [[4,0,0,0],[-2,1,0,0],[2,-3,4,0],[2,-2,-4,1]] (same L but with D absorbed into columns)\n\n(d) Same D = diag(4,1,4,1), L same as in (a)\n\n(e) Cholesky: C = [[2,0,0,0],[-1,1,0,0],[1,-3,2,0],[1,-2,-2,1]]\n\n(f) Upper triangular Cholesky (row operations): CT = [[2,-1,1,1],[0,1,-3,-2],[0,0,2,-2],[0,0,0,1]]',
+    guide: '**Part (a):** Standard LU factorization.\n\n**Part (b):** LDR from LU:\n  - D = diag(U11, U22, U33, U44)\n  - R = D^(-1)U (divide each row i of U by Uii)\n  - L stays the same (unit lower triangular)\n\n**Part (c):** Column operations (instead of row operations):\n  - Work on columns of A from left to right\n  - Subtract multiples of earlier columns to zero out entries above the diagonal\n  - This gives W (lower triangular) and R (upper triangular, unit diagonal)\n\n**Part (e):** Cholesky from LDR:\n  - Since A is SPD, D has all positive diagonal entries\n  - C = L × D^(1/2) (multiply each column of L by sqrt of corresponding D entry)\n  - Verify: CCT = (LD^(1/2))(D^(1/2)LT) = LDLT = A\n\n**Part (f):** Upper triangular Cholesky = CT from part (e).',
+    difficulty: 'hard',
+    tags: ['LU', 'LDR', 'Cholesky', '4x4', 'column-operations', 'tutorial'],
+  },
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────────
 // CONDITIONING OF LINEAR SYSTEMS
 // ─────────────────────────────────────────────────────────────────────────────
 
