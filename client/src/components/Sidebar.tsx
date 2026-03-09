@@ -2,7 +2,7 @@
 // Design: "Golden Hour Study Retreat" — dark mahogany sidebar with golden accents
 
 import { useState } from 'react';
-import { BookOpen, BarChart3, Search, ChevronDown, ChevronRight, Leaf, Waves, Mountain, Home, Library, Code2 } from 'lucide-react';
+import { BookOpen, BarChart3, Search, ChevronDown, ChevronRight, Leaf, Waves, Mountain, Home, Library, Code2, GraduationCap } from 'lucide-react';
 import { chapters } from '@/lib/courseData';
 import { useProgress } from '@/contexts/ProgressContext';
 
@@ -13,7 +13,7 @@ interface SidebarProps {
   onNavigate: (view: string, chapterId?: string, topicId?: string) => void;
 }
 
-const chapterIcons = [Waves, Leaf, Mountain];
+const chapterIcons = [GraduationCap, Waves, Leaf, Mountain];
 
 export function Sidebar({ currentView, currentChapter, currentTopic, onNavigate }: SidebarProps) {
   const [expandedChapters, setExpandedChapters] = useState<Set<string>>(new Set(['ch1']));
@@ -53,7 +53,7 @@ export function Sidebar({ currentView, currentChapter, currentTopic, onNavigate 
           </div>
         </div>
         <p className="text-xs mt-2 px-1" style={{ color: 'oklch(0.55 0.06 60)', fontFamily: 'Lora, serif', fontStyle: 'italic' }}>
-          Chapters 1–3 · L1.1–L3.8 · Tuts 1–5
+          Primer + Chapters 1–3 · L1.1–L3.8 · Tuts 1–5
         </p>
       </div>
 
@@ -142,7 +142,7 @@ export function Sidebar({ currentView, currentChapter, currentTopic, onNavigate 
                 <div className="flex items-center gap-2 flex-1 min-w-0">
                   <Icon className="w-4 h-4 flex-shrink-0" style={{ color: ch.accentColor }} />
                   <span className="truncate text-xs">
-                    Ch {ch.number}: {ch.title}
+                    {ch.number === 0 ? '📐 ' : `Ch ${ch.number}: `}{ch.title}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 flex-shrink-0">

@@ -33,7 +33,7 @@ export default function ChapterView({ chapterId, onNavigate }: ChapterViewProps)
         <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, oklch(0.15 0.05 35 / 0.92) 0%, oklch(0.15 0.05 35 / 0.65) 55%, oklch(0.15 0.05 35 / 0.3) 100%)' }} />
         <div className="absolute inset-0 flex flex-col justify-end px-8 pb-6">
           <p className="text-xs uppercase tracking-widest mb-1" style={{ color: 'oklch(0.72 0.15 65)', fontFamily: 'Lora, serif' }}>
-            Chapter {chapter.number}
+            {chapter.number === 0 ? 'Pre-requisite Primer' : `Chapter ${chapter.number}`}
           </p>
           <h1 className="text-3xl font-bold" style={{ fontFamily: 'Cormorant Garamond, serif', color: 'white' }}>
             {chapter.icon} {chapter.title}

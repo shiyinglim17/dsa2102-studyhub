@@ -35,7 +35,7 @@ export default function HomeView({ onNavigate }: HomeViewProps) {
             Your Midterm<br />Study Retreat
           </h1>
           <p className="text-sm max-w-md" style={{ color: 'oklch(0.85 0.04 80)', fontFamily: 'Lora, serif', lineHeight: 1.6 }}>
-            Master Chapters 1–3 with curated notes, formula cards, mini-tests, and progress tracking. Midterm: <strong style={{ color: 'oklch(0.88 0.10 75)' }}>10 March</strong>.
+            Master Chapters 1–3 with curated notes, formula cards, mini-tests, and progress tracking. Start with the <strong style={{ color: 'oklch(0.88 0.10 75)' }}>LA Primer</strong> if you need a refresher. Midterm: <strong style={{ color: 'oklch(0.88 0.10 75)' }}>10 March</strong>.
           </p>
           {overallMastery > 0 && (
             <div className="mt-4 flex items-center gap-3">
@@ -105,7 +105,7 @@ export default function HomeView({ onNavigate }: HomeViewProps) {
                     <div className="absolute inset-0 flex items-center px-5">
                       <div className="flex-1">
                         <p className="text-xs mb-1" style={{ color: 'oklch(0.72 0.15 65)', fontFamily: 'Lora, serif', letterSpacing: '0.05em' }}>
-                          Chapter {ch.number} · {ch.topics.length} topics
+                          {ch.number === 0 ? 'Pre-requisite Primer' : `Chapter ${ch.number}`} · {ch.topics.length} topics
                         </p>
                         <h3 className="text-lg font-bold" style={{ fontFamily: 'Cormorant Garamond, serif', color: 'white', lineHeight: 1.2 }}>
                           {ch.icon} {ch.title}

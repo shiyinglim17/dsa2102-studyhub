@@ -49,6 +49,446 @@ export interface Chapter {
 }
 
 // ============================================================
+// CHAPTER 0: LINEAR ALGEBRA PRIMER (Pre-requisite Review)
+// ============================================================
+
+const chapter0Topics: Topic[] = [
+  // ── Topic 0.1: Matrices & Vectors ──────────────────────────
+  {
+    id: 'c0t1',
+    title: 'Matrices & Vectors — Core Definitions',
+    lectureRef: 'Pre-requisite',
+    formulas: [
+      {
+        id: 'matrix-transpose',
+        title: 'Transpose',
+        latex: '(A^T)_{ij} = A_{ji} \\quad \\Rightarrow \\quad (AB)^T = B^T A^T',
+        description: 'Flips rows and columns. The transpose of a product reverses the order.',
+        isKey: true,
+      },
+      {
+        id: 'matrix-trace',
+        title: 'Trace',
+        latex: '\\text{tr}(A) = \\sum_{i=1}^n A_{ii} = \\lambda_1 + \\lambda_2 + \\cdots + \\lambda_n',
+        description: 'Sum of diagonal entries = sum of all eigenvalues.',
+        isKey: false,
+      },
+      {
+        id: 'matrix-det',
+        title: 'Determinant (2×2)',
+        latex: '\\det\\begin{pmatrix}a & b \\\\ c & d\\end{pmatrix} = ad - bc',
+        description: 'For larger matrices, expand by cofactors or use row operations. det(AB) = det(A)det(B).',
+        isKey: true,
+      },
+      {
+        id: 'matrix-rank',
+        title: 'Rank',
+        latex: '\\text{rank}(A) = \\text{number of linearly independent rows (or columns)}',
+        description: 'For an m×n matrix: rank(A) ≤ min(m,n). Full rank means rank = min(m,n).',
+        isKey: true,
+      },
+    ],
+    content: [
+      {
+        type: 'highlight',
+        title: '📚 What This Primer Covers',
+        content: 'This section reviews the linear algebra concepts assumed as pre-requisite knowledge for DSA2102. You will encounter these ideas constantly in Chapters 1–3. Work through this before starting Chapter 1 if any notation or concept feels unfamiliar.',
+      },
+      {
+        type: 'text',
+        content: '**Matrix Dimensions and Notation**\n\nA matrix $A \\in \\mathbb{R}^{m \\times n}$ has $m$ rows and $n$ columns. Entry in row $i$, column $j$ is written $A_{ij}$ or $a_{ij}$.\n\n- **Square matrix**: $m = n$\n- **Column vector**: $n = 1$, written $\\mathbf{x} \\in \\mathbb{R}^m$\n- **Row vector**: $m = 1$\n- **Identity matrix** $I_n$: square, $I_{ii} = 1$, $I_{ij} = 0$ for $i \\neq j$; satisfies $AI = IA = A$\n- **Zero matrix** $O$: all entries zero',
+      },
+      {
+        type: 'text',
+        content: '**Transpose Properties**\n\nThe transpose $A^T$ swaps rows and columns: $(A^T)_{ij} = A_{ji}$.\n\nKey identities:\n- $(A^T)^T = A$\n- $(A + B)^T = A^T + B^T$\n- $(AB)^T = B^T A^T$ ← **order reverses!**\n- $(A^{-1})^T = (A^T)^{-1}$\n\nA matrix is **symmetric** if $A = A^T$ (all real eigenvalues). A matrix is **skew-symmetric** if $A = -A^T$.',
+      },
+      {
+        type: 'text',
+        content: '**Rank and Linear Independence**\n\nThe **rank** of a matrix is the number of linearly independent rows (equivalently, columns). For $A \\in \\mathbb{R}^{m \\times n}$:\n\n- $\\text{rank}(A) \\leq \\min(m, n)$\n- **Full column rank**: $\\text{rank}(A) = n$ — columns are linearly independent; $Ax = 0$ has only the trivial solution\n- **Full row rank**: $\\text{rank}(A) = m$ — rows are linearly independent\n- **Rank-deficient**: $\\text{rank}(A) < \\min(m, n)$ — some columns/rows are redundant\n\nIn DSA2102: the least squares problem $Ax \\approx b$ requires $A$ to have **full column rank** for a unique solution.',
+      },
+      {
+        type: 'text',
+        content: '**Trace and Determinant**\n\nThe **trace** $\\text{tr}(A) = \\sum_i A_{ii}$ equals the sum of eigenvalues. Key property: $\\text{tr}(AB) = \\text{tr}(BA)$.\n\nThe **determinant** $\\det(A)$ (or $|A|$) is a scalar that encodes whether $A$ is invertible:\n- $\\det(A) \\neq 0 \\Leftrightarrow A$ is invertible (non-singular)\n- $\\det(A) = 0 \\Leftrightarrow A$ is singular\n- $\\det(AB) = \\det(A) \\det(B)$\n- $\\det(A^T) = \\det(A)$\n- $\\det(A^{-1}) = 1/\\det(A)$\n\nFor triangular matrices: $\\det(A) = \\prod_i A_{ii}$ (product of diagonal entries).',
+      },
+      {
+        type: 'example',
+        title: 'Example: Rank and Determinant',
+        content: 'A = [[2, 4], [1, 2]]\n\nRow 2 = (1/2) × Row 1 → rows are linearly dependent → rank(A) = 1 (rank-deficient)\n\ndet(A) = (2)(2) − (4)(1) = 4 − 4 = 0 ✓ (singular, as expected from rank < 2)\n\nB = [[3, 1], [2, 4]]\n\ndet(B) = (3)(4) − (1)(2) = 12 − 2 = 10 ≠ 0 → rank(B) = 2 (full rank, invertible)',
+      },
+    ],
+    quiz: [
+      {
+        id: 'q-c0t1-1',
+        question: 'Matrix A is 4×3. What is the maximum possible rank of A?',
+        options: ['4', '3', '12', '7'],
+        correctIndex: 1,
+        explanation: 'For an m×n matrix, rank ≤ min(m,n) = min(4,3) = 3. The rank cannot exceed the number of columns.',
+        topicId: 'c0t1',
+      },
+      {
+        id: 'q-c0t1-2',
+        question: 'If det(A) = 0, which of the following must be true?',
+        options: [
+          'A has all zero entries',
+          'A is singular and not invertible',
+          'A is the identity matrix',
+          'All eigenvalues of A are zero',
+        ],
+        correctIndex: 1,
+        explanation: 'det(A) = 0 means A is singular (rank-deficient) and therefore not invertible. The matrix need not have all zero entries — e.g., [[1,2],[2,4]] has det = 0 but non-zero entries.',
+        topicId: 'c0t1',
+      },
+      {
+        id: 'q-c0t1-3',
+        question: 'Which identity correctly expresses the transpose of a product?',
+        options: ['(AB)ᵀ = AᵀBᵀ', '(AB)ᵀ = BᵀAᵀ', '(AB)ᵀ = AB', '(AB)ᵀ = (Aᵀ)⁻¹Bᵀ'],
+        correctIndex: 1,
+        explanation: '(AB)ᵀ = BᵀAᵀ — the order reverses. This is one of the most important matrix identities used throughout DSA2102, especially in the normal equations AᵀAx̂ = Aᵀb.',
+        topicId: 'c0t1',
+      },
+      {
+        id: 'q-c0t1-4',
+        question: 'For a triangular matrix T, how is det(T) computed?',
+        options: [
+          'Sum of all diagonal entries',
+          'Product of all entries',
+          'Product of all diagonal entries',
+          'Sum of all entries',
+        ],
+        correctIndex: 2,
+        explanation: 'For any triangular matrix (upper or lower), det(T) = product of diagonal entries. This is why checking if any diagonal entry of U in LU factorization is zero tells us if A is singular.',
+        topicId: 'c0t1',
+      },
+    ],
+  },
+
+  // ── Topic 0.2: Invertibility & Special Matrices ─────────────
+  {
+    id: 'c0t2',
+    title: 'Invertibility, Singularity & Special Matrices',
+    lectureRef: 'Pre-requisite',
+    formulas: [
+      {
+        id: 'matrix-inverse',
+        title: 'Matrix Inverse',
+        latex: 'A A^{-1} = A^{-1} A = I \\quad \\Leftrightarrow \\quad \\det(A) \\neq 0',
+        description: 'A is invertible iff det(A) ≠ 0. For 2×2: A⁻¹ = (1/det(A))[[d,−b],[−c,a]].',
+        isKey: true,
+      },
+      {
+        id: 'spd-def',
+        title: 'Symmetric Positive Definite (SPD)',
+        latex: 'A \\text{ is SPD} \\Leftrightarrow A = A^T \\text{ and } \\mathbf{x}^T A \\mathbf{x} > 0 \\; \\forall \\mathbf{x} \\neq \\mathbf{0}',
+        description: 'Equivalently: A is symmetric and all eigenvalues are strictly positive. SPD matrices arise in normal equations AᵀA and Cholesky factorization.',
+        isKey: true,
+      },
+      {
+        id: 'inverse-product',
+        title: 'Inverse of a Product',
+        latex: '(AB)^{-1} = B^{-1} A^{-1}',
+        description: 'Order reverses, just like the transpose. Both A and B must be invertible.',
+        isKey: true,
+      },
+    ],
+    content: [
+      {
+        type: 'highlight',
+        title: 'Notation Guide: Symbols in This Topic',
+        content: '**A⁻¹** — matrix inverse (only exists when det(A) ≠ 0)\n**SPD** — Symmetric Positive Definite\n**xᵀAx** — quadratic form (scalar): multiply row vector xᵀ by matrix A by column vector x\n**λᵢ** — eigenvalue i of A\n**Aᵀ = A** — symmetry condition',
+      },
+      {
+        type: 'text',
+        content: '**Invertibility and Singularity**\n\nA square matrix $A \\in \\mathbb{R}^{n \\times n}$ is **invertible** (non-singular) if there exists $A^{-1}$ such that $AA^{-1} = A^{-1}A = I$.\n\nThe following are all **equivalent** statements:\n1. $A$ is invertible\n2. $\\det(A) \\neq 0$\n3. $\\text{rank}(A) = n$ (full rank)\n4. $Ax = 0$ has only the trivial solution $x = 0$\n5. $Ax = b$ has a unique solution for every $b$\n6. All eigenvalues of $A$ are non-zero\n7. The columns (and rows) of $A$ are linearly independent\n\nIn DSA2102, you need $A$ to be invertible (or $A^TA$ to be invertible) to guarantee unique solutions to linear systems and least squares problems.',
+      },
+      {
+        type: 'text',
+        content: '**Special Matrix Types**\n\n| Type | Definition | Key Property |\n|---|---|---|\n| **Symmetric** | $A = A^T$ | Real eigenvalues |\n| **Skew-symmetric** | $A = -A^T$ | Pure imaginary eigenvalues |\n| **Diagonal** | $A_{ij} = 0$ for $i \\neq j$ | $A^{-1}$ has entries $1/A_{ii}$ |\n| **Upper triangular** | $A_{ij} = 0$ for $i > j$ | Solved by back-substitution |\n| **Lower triangular** | $A_{ij} = 0$ for $i < j$ | Solved by forward-substitution |\n| **Orthogonal** | $A^T A = A A^T = I$ | $A^{-1} = A^T$, preserves norms |\n| **SPD** | $A = A^T$, $\\mathbf{x}^T A \\mathbf{x} > 0$ | Cholesky factorization exists |',
+      },
+      {
+        type: 'text',
+        content: '**Symmetric Positive Definite (SPD) Matrices**\n\nSPD matrices are the most important class in DSA2102 because:\n- The **normal equations** $A^T A \\hat{x} = A^T b$ involve $A^T A$, which is always symmetric and positive semi-definite (SPD if $A$ has full column rank)\n- **Cholesky factorization** $A = LL^T$ only works for SPD matrices and is twice as fast as LU\n\nEquivalent conditions for SPD:\n1. $A = A^T$ and all eigenvalues $\\lambda_i > 0$\n2. $A = A^T$ and all leading principal minors are positive\n3. $A = A^T$ and $A = R^T R$ for some non-singular upper triangular $R$ (Cholesky)\n4. $\\mathbf{x}^T A \\mathbf{x} > 0$ for all $\\mathbf{x} \\neq \\mathbf{0}$',
+      },
+      {
+        type: 'example',
+        title: 'Example: Checking SPD',
+        content: 'Is A = [[4, 2], [2, 3]] SPD?\n\nStep 1 — Symmetry: A₁₂ = 2 = A₂₁ ✓\n\nStep 2 — Leading principal minors:\n  • 1×1 minor: det([4]) = 4 > 0 ✓\n  • 2×2 minor: det(A) = (4)(3) − (2)(2) = 12 − 4 = 8 > 0 ✓\n\nConclusion: A is SPD ✓\n\nCholesky factorization A = LLᵀ exists:\n  L₁₁ = √4 = 2\n  L₂₁ = 2/2 = 1\n  L₂₂ = √(3 − 1²) = √2\n\n  L = [[2, 0], [1, √2]]',
+      },
+      {
+        type: 'text',
+        content: '**Triangular Matrices and Solving Linear Systems**\n\nTriangular systems are the workhorse of numerical linear algebra. After factorizing $A = LU$, you solve two triangular systems:\n\n**Forward substitution** (lower triangular $Ly = b$):\n$$y_i = \\frac{b_i - \\sum_{j=1}^{i-1} L_{ij} y_j}{L_{ii}}$$\n\n**Back substitution** (upper triangular $Ux = y$):\n$$x_i = \\frac{y_i - \\sum_{j=i+1}^{n} U_{ij} x_j}{U_{ii}}$$\n\nBoth cost $O(n^2)$ operations. The diagonal entries $L_{ii}$ and $U_{ii}$ must be non-zero for the system to be solvable.',
+      },
+      {
+        type: 'warning',
+        title: 'Common Mistake: Inverse vs Transpose for Orthogonal Matrices',
+        content: 'For orthogonal matrices Q (where QᵀQ = I), the inverse is simply Qᵀ. So Q⁻¹ = Qᵀ. This does NOT mean every matrix with Qᵀ = Q⁻¹ is orthogonal — you must verify QᵀQ = I first.',
+      },
+    ],
+    quiz: [
+      {
+        id: 'q-c0t2-1',
+        question: 'Which of the following is NOT equivalent to "A is invertible"?',
+        options: [
+          'det(A) ≠ 0',
+          'rank(A) = n (full rank)',
+          'All eigenvalues of A are non-zero',
+          'A is symmetric',
+        ],
+        correctIndex: 3,
+        explanation: 'Symmetry (A = Aᵀ) has nothing to do with invertibility. A symmetric matrix can be singular (e.g., [[1,1],[1,1]] is symmetric but singular). All the other options are equivalent to invertibility.',
+        topicId: 'c0t2',
+      },
+      {
+        id: 'q-c0t2-2',
+        question: 'Matrix A is SPD. Which factorization is most efficient for solving Ax = b?',
+        options: ['LU with partial pivoting', 'Cholesky (A = LLᵀ)', 'QR factorization', 'Gaussian elimination without pivoting'],
+        correctIndex: 1,
+        explanation: 'Cholesky factorization exploits the SPD structure: it only computes L (not both L and U), requires ~n³/3 operations (half of LU), and is always numerically stable for SPD matrices without needing pivoting.',
+        topicId: 'c0t2',
+      },
+      {
+        id: 'q-c0t2-3',
+        question: 'For A = [[5, 2], [2, 1]], is A SPD?',
+        options: [
+          'No — A is not symmetric',
+          'No — det(A) < 0',
+          'Yes — A is symmetric and all leading principal minors are positive',
+          'Cannot determine without computing eigenvalues',
+        ],
+        correctIndex: 2,
+        explanation: 'A is symmetric (A₁₂ = A₂₁ = 2). Leading principal minors: det([5]) = 5 > 0 ✓; det(A) = 5·1 − 2·2 = 1 > 0 ✓. Both positive → A is SPD.',
+        topicId: 'c0t2',
+      },
+      {
+        id: 'q-c0t2-4',
+        question: 'If A is lower triangular with diagonal entries [2, 3, 5], what is det(A)?',
+        options: ['10', '30', '15', '0'],
+        correctIndex: 1,
+        explanation: 'For any triangular matrix, det = product of diagonal entries = 2 × 3 × 5 = 30.',
+        topicId: 'c0t2',
+      },
+    ],
+  },
+
+  // ── Topic 0.3: Orthogonality & Orthonormality ───────────────
+  {
+    id: 'c0t3',
+    title: 'Orthogonality & Orthonormality',
+    lectureRef: 'Pre-requisite',
+    formulas: [
+      {
+        id: 'dot-product',
+        title: 'Dot Product (Inner Product)',
+        latex: '\\langle \\mathbf{u}, \\mathbf{v} \\rangle = \\mathbf{u}^T \\mathbf{v} = \\sum_{i=1}^n u_i v_i',
+        description: 'Two vectors are orthogonal iff their dot product is zero.',
+        isKey: true,
+      },
+      {
+        id: 'orthogonal-matrix',
+        title: 'Orthogonal Matrix',
+        latex: 'Q^T Q = Q Q^T = I \\quad \\Rightarrow \\quad Q^{-1} = Q^T',
+        description: 'Columns (and rows) are orthonormal. Q preserves vector lengths: ‖Qx‖₂ = ‖x‖₂.',
+        isKey: true,
+      },
+      {
+        id: 'projection',
+        title: 'Orthogonal Projection onto a Vector',
+        latex: '\\text{proj}_{\\mathbf{u}} \\mathbf{v} = \\frac{\\mathbf{u}^T \\mathbf{v}}{\\mathbf{u}^T \\mathbf{u}} \\mathbf{u}',
+        description: 'Projects v onto the direction of u. Used in Gram-Schmidt orthogonalization.',
+        isKey: true,
+      },
+      {
+        id: 'orthonormal-basis',
+        title: 'Orthonormal Basis',
+        latex: '\\{\\mathbf{q}_1, \\ldots, \\mathbf{q}_k\\} \\text{ orthonormal} \\Leftrightarrow \\mathbf{q}_i^T \\mathbf{q}_j = \\delta_{ij} = \\begin{cases} 1 & i = j \\\\ 0 & i \\neq j \\end{cases}',
+        description: 'Each vector has unit length AND every pair is perpendicular. The columns of a Q matrix from QR factorization form an orthonormal basis.',
+        isKey: true,
+      },
+    ],
+    content: [
+      {
+        type: 'text',
+        content: '**Orthogonality**\n\nTwo vectors $\\mathbf{u}, \\mathbf{v} \\in \\mathbb{R}^n$ are **orthogonal** if their dot product is zero:\n$$\\mathbf{u} \\perp \\mathbf{v} \\Leftrightarrow \\mathbf{u}^T \\mathbf{v} = 0$$\n\nGeometrically, orthogonal vectors are perpendicular. In $\\mathbb{R}^2$: $[1, 0]^T$ and $[0, 1]^T$ are orthogonal.\n\nA set of vectors $\\{\\mathbf{v}_1, \\ldots, \\mathbf{v}_k\\}$ is **orthogonal** if every pair is orthogonal: $\\mathbf{v}_i^T \\mathbf{v}_j = 0$ for all $i \\neq j$.\n\nAn orthogonal set of non-zero vectors is **automatically linearly independent** — this is a key reason orthogonal bases are so useful.',
+      },
+      {
+        type: 'text',
+        content: '**Orthonormality**\n\nA set of vectors is **orthonormal** if it is orthogonal AND every vector has unit length ($\\|\\mathbf{v}_i\\|_2 = 1$):\n$$\\mathbf{q}_i^T \\mathbf{q}_j = \\delta_{ij} = \\begin{cases} 1 & i = j \\\\ 0 & i \\neq j \\end{cases}$$\n\nTo convert an orthogonal set to orthonormal: normalize each vector by dividing by its length:\n$$\\mathbf{q}_i = \\frac{\\mathbf{v}_i}{\\|\\mathbf{v}_i\\|_2}$$\n\n**Why orthonormal bases are powerful:**\n- Coordinates in an orthonormal basis are just dot products: $c_i = \\mathbf{q}_i^T \\mathbf{b}$\n- No need to solve a system — just project!\n- This is why QR factorization is so numerically stable',
+      },
+      {
+        type: 'text',
+        content: '**Orthogonal Matrices**\n\nA square matrix $Q \\in \\mathbb{R}^{n \\times n}$ is **orthogonal** if its columns form an orthonormal set:\n$$Q^T Q = Q Q^T = I \\quad \\Rightarrow \\quad Q^{-1} = Q^T$$\n\nKey properties:\n1. **Norm-preserving**: $\\|Q\\mathbf{x}\\|_2 = \\|\\mathbf{x}\\|_2$ for all $\\mathbf{x}$\n2. **Angle-preserving**: $(Q\\mathbf{x})^T(Q\\mathbf{y}) = \\mathbf{x}^T\\mathbf{y}$\n3. $|\\det(Q)| = 1$ (either $+1$ or $-1$)\n4. **Condition number**: $\\kappa_2(Q) = 1$ — perfectly conditioned!\n5. Eigenvalues have magnitude 1\n\nExamples: rotation matrices, reflection matrices, Householder matrices, Givens rotation matrices.',
+      },
+      {
+        type: 'example',
+        title: 'Example: Verifying Orthonormality',
+        content: 'Check if the columns of Q = [[1/√2, 1/√2], [1/√2, −1/√2]] are orthonormal.\n\nColumn 1: q₁ = [1/√2, 1/√2]ᵀ\nColumn 2: q₂ = [1/√2, −1/√2]ᵀ\n\nStep 1 — Unit lengths:\n  ‖q₁‖₂ = √((1/√2)² + (1/√2)²) = √(1/2 + 1/2) = √1 = 1 ✓\n  ‖q₂‖₂ = √((1/√2)² + (−1/√2)²) = √(1/2 + 1/2) = 1 ✓\n\nStep 2 — Orthogonality:\n  q₁ᵀq₂ = (1/√2)(1/√2) + (1/√2)(−1/√2) = 1/2 − 1/2 = 0 ✓\n\nConclusion: Q is orthogonal (QᵀQ = I). This is a 45° rotation matrix.',
+      },
+      {
+        type: 'text',
+        content: '**Orthogonal Projection**\n\nThe projection of vector $\\mathbf{b}$ onto the column space of $A$ (denoted $\\text{col}(A)$) is:\n$$\\hat{\\mathbf{b}} = A(A^T A)^{-1} A^T \\mathbf{b} = P\\mathbf{b}$$\n\nwhere $P = A(A^T A)^{-1} A^T$ is the **projection matrix** (also called orthogonal projector).\n\nProperties of projection matrices:\n- $P^2 = P$ (idempotent)\n- $P^T = P$ (symmetric)\n- $I - P$ is also a projection (onto the orthogonal complement)\n\nThe **residual** $\\mathbf{r} = \\mathbf{b} - \\hat{\\mathbf{b}}$ is orthogonal to $\\text{col}(A)$: $A^T \\mathbf{r} = \\mathbf{0}$.\n\nThis is the geometric foundation of least squares: $\\hat{x}$ minimizes $\\|A\\mathbf{x} - \\mathbf{b}\\|_2$ because $A\\hat{x}$ is the closest point in $\\text{col}(A)$ to $\\mathbf{b}$.',
+      },
+      {
+        type: 'highlight',
+        title: 'Key Insight: Why Orthogonality Matters in DSA2102',
+        content: '1. **QR Factorization**: Decomposes A = QR where Q has orthonormal columns → solves least squares stably\n2. **Gram-Schmidt**: Converts any basis into an orthonormal one by iterative projection and normalization\n3. **Householder/Givens**: Orthogonal transformations that zero out entries without amplifying errors (κ₂(Q) = 1)\n4. **SVD**: A = UΣVᵀ where U and V are orthogonal matrices\n5. **Least Squares Geometry**: The solution x̂ is found by projecting b onto col(A)',
+      },
+    ],
+    quiz: [
+      {
+        id: 'q-c0t3-1',
+        question: 'Vectors u = [3, 4]ᵀ and v = [−4, 3]ᵀ. Are they orthogonal?',
+        options: [
+          'No — they have different lengths',
+          'Yes — uᵀv = 0',
+          'No — uᵀv = 25',
+          'Cannot determine without normalizing',
+        ],
+        correctIndex: 1,
+        explanation: 'uᵀv = (3)(−4) + (4)(3) = −12 + 12 = 0. Since the dot product is zero, u and v are orthogonal. Note: they have the same length (‖u‖₂ = ‖v‖₂ = 5) but that is not required for orthogonality.',
+        topicId: 'c0t3',
+      },
+      {
+        id: 'q-c0t3-2',
+        question: 'Q is an orthogonal matrix. What is Q⁻¹?',
+        options: ['Q itself', 'Qᵀ', '−Q', '1/det(Q) × Qᵀ'],
+        correctIndex: 1,
+        explanation: 'For orthogonal Q, QᵀQ = I, so Q⁻¹ = Qᵀ. This is the defining property of orthogonal matrices and makes them computationally cheap to invert.',
+        topicId: 'c0t3',
+      },
+      {
+        id: 'q-c0t3-3',
+        question: 'What is the condition number κ₂(Q) of an orthogonal matrix Q?',
+        options: ['0', '∞', '1', 'det(Q)'],
+        correctIndex: 2,
+        explanation: 'κ₂(Q) = ‖Q‖₂ · ‖Q⁻¹‖₂ = 1 · 1 = 1. Orthogonal matrices are perfectly conditioned — they do not amplify errors at all. This is why QR factorization is numerically stable.',
+        topicId: 'c0t3',
+      },
+      {
+        id: 'q-c0t3-4',
+        question: 'The projection of b onto col(A) gives the vector Pb. What is true about the residual r = b − Pb?',
+        options: [
+          'r is parallel to b',
+          'r is orthogonal to every column of A (Aᵀr = 0)',
+          'r = 0 always',
+          'r has the same length as b',
+        ],
+        correctIndex: 1,
+        explanation: 'The residual r = b − Pb is orthogonal to the column space of A, meaning Aᵀr = 0. This is the geometric condition that defines the least squares solution: the normal equations Aᵀ(Ax̂ − b) = 0.',
+        topicId: 'c0t3',
+      },
+    ],
+  },
+
+  // ── Topic 0.4: Eigenvalues, SVD & Key Identities ────────────
+  {
+    id: 'c0t4',
+    title: 'Eigenvalues, SVD & Key Matrix Identities',
+    lectureRef: 'Pre-requisite',
+    formulas: [
+      {
+        id: 'eigenvalue-def',
+        title: 'Eigenvalue / Eigenvector',
+        latex: 'A\\mathbf{v} = \\lambda \\mathbf{v} \\quad \\Leftrightarrow \\quad \\det(A - \\lambda I) = 0',
+        description: 'λ is an eigenvalue and v is the corresponding eigenvector. The characteristic polynomial det(A − λI) = 0 gives all eigenvalues.',
+        isKey: true,
+      },
+      {
+        id: 'svd-def',
+        title: 'Singular Value Decomposition (SVD)',
+        latex: 'A = U \\Sigma V^T, \\quad \\sigma_i = \\sqrt{\\lambda_i(A^T A)}',
+        description: 'Any m×n matrix A can be written as A = UΣVᵀ where U (m×m) and V (n×n) are orthogonal, and Σ is diagonal with σ₁ ≥ σ₂ ≥ ⋯ ≥ 0.',
+        isKey: true,
+      },
+      {
+        id: 'spectral-radius',
+        title: 'Spectral Radius',
+        latex: '\\rho(A) = \\max_i |\\lambda_i(A)|',
+        description: 'The largest absolute eigenvalue. For symmetric A: ‖A‖₂ = ρ(A) = σ_max.',
+        isKey: false,
+      },
+      {
+        id: 'ata-properties',
+        title: 'Properties of AᵀA',
+        latex: 'A^T A \\text{ is always symmetric PSD}; \\text{ SPD iff } \\text{rank}(A) = n',
+        description: 'The eigenvalues of AᵀA are the squared singular values of A: λᵢ(AᵀA) = σᵢ². This connects SVD to eigenvalue theory.',
+        isKey: true,
+      },
+    ],
+    content: [
+      {
+        type: 'text',
+        content: '**Eigenvalues and Eigenvectors**\n\nFor a square matrix $A \\in \\mathbb{R}^{n \\times n}$, a scalar $\\lambda$ and non-zero vector $\\mathbf{v}$ satisfying $A\\mathbf{v} = \\lambda \\mathbf{v}$ are called an **eigenvalue** and **eigenvector** pair.\n\nGeometrically: $A$ stretches (or flips) $\\mathbf{v}$ by factor $\\lambda$ without changing its direction.\n\n**Finding eigenvalues**: solve the characteristic equation $\\det(A - \\lambda I) = 0$.\n\nKey facts:\n- An $n \\times n$ matrix has exactly $n$ eigenvalues (counting multiplicity, possibly complex)\n- $\\text{tr}(A) = \\sum_i \\lambda_i$ and $\\det(A) = \\prod_i \\lambda_i$\n- Symmetric matrices have **real** eigenvalues\n- SPD matrices have **positive** eigenvalues',
+      },
+      {
+        type: 'example',
+        title: 'Example: Finding Eigenvalues of a 2×2 Matrix',
+        content: 'A = [[3, 1], [1, 3]]\n\nCharacteristic equation: det(A − λI) = 0\n  det([[3−λ, 1], [1, 3−λ]]) = (3−λ)² − 1 = 0\n  (3−λ)² = 1\n  3−λ = ±1\n  λ₁ = 4,  λ₂ = 2\n\nCheck: tr(A) = 3 + 3 = 6 = λ₁ + λ₂ = 4 + 2 ✓\n       det(A) = 9 − 1 = 8 = λ₁ · λ₂ = 4 · 2 ✓\n\nSince A is symmetric and both eigenvalues are positive → A is SPD.',
+      },
+      {
+        type: 'text',
+        content: '**Singular Value Decomposition (SVD)**\n\nThe SVD generalizes eigendecomposition to **rectangular** matrices. For $A \\in \\mathbb{R}^{m \\times n}$:\n$$A = U \\Sigma V^T$$\n\nwhere:\n- $U \\in \\mathbb{R}^{m \\times m}$: orthogonal matrix, columns are **left singular vectors**\n- $\\Sigma \\in \\mathbb{R}^{m \\times n}$: diagonal, entries $\\sigma_1 \\geq \\sigma_2 \\geq \\cdots \\geq 0$ are **singular values**\n- $V \\in \\mathbb{R}^{n \\times n}$: orthogonal matrix, columns are **right singular vectors**\n\n**Connection to eigenvalues:**\n- $\\sigma_i = \\sqrt{\\lambda_i(A^T A)}$ — singular values are square roots of eigenvalues of $A^T A$\n- $A^T A = V \\Sigma^T \\Sigma V^T$ — eigendecomposition of $A^T A$\n- $A A^T = U \\Sigma \\Sigma^T U^T$ — eigendecomposition of $A A^T$\n\n**Why SVD matters in DSA2102:**\n- $\\|A\\|_2 = \\sigma_{\\max}$ (spectral norm = largest singular value)\n- $\\kappa_2(A) = \\sigma_{\\max} / \\sigma_{\\min}$ (condition number)\n- Rank of $A$ = number of non-zero singular values',
+      },
+      {
+        type: 'highlight',
+        title: 'Key Matrix Identities Cheat Sheet',
+        content: '**Transpose identities:**\n  (AB)ᵀ = BᵀAᵀ\n  (Aᵀ)ᵀ = A\n  (A⁻¹)ᵀ = (Aᵀ)⁻¹\n\n**Inverse identities:**\n  (AB)⁻¹ = B⁻¹A⁻¹\n  (Aᵀ)⁻¹ = (A⁻¹)ᵀ\n  (A⁻¹)⁻¹ = A\n\n**Determinant identities:**\n  det(AB) = det(A)det(B)\n  det(Aᵀ) = det(A)\n  det(A⁻¹) = 1/det(A)\n  det(cA) = cⁿ det(A) for n×n matrix\n\n**Orthogonal matrix Q:**\n  QᵀQ = QQᵀ = I\n  Q⁻¹ = Qᵀ\n  ‖Qx‖₂ = ‖x‖₂\n  κ₂(Q) = 1\n\n**AᵀA properties:**\n  (AᵀA)ᵀ = AᵀA (symmetric)\n  xᵀ(AᵀA)x = ‖Ax‖₂² ≥ 0 (PSD)\n  SPD iff rank(A) = n',
+      },
+      {
+        type: 'text',
+        content: '**Matrix-Vector Product as Linear Combination**\n\nA crucial way to think about $A\\mathbf{x}$: it is a **linear combination of the columns of $A$** with coefficients from $\\mathbf{x}$:\n$$A\\mathbf{x} = x_1 \\mathbf{a}_1 + x_2 \\mathbf{a}_2 + \\cdots + x_n \\mathbf{a}_n$$\n\nwhere $\\mathbf{a}_j$ is the $j$-th column of $A$.\n\nThis means: $A\\mathbf{x} = \\mathbf{b}$ is asking "can $\\mathbf{b}$ be written as a linear combination of the columns of $A$?"\n\n- If yes (and $A$ has full column rank): unique solution $\\mathbf{x}$\n- If yes (but $A$ is rank-deficient): infinitely many solutions\n- If no ($\\mathbf{b} \\notin \\text{col}(A)$): no exact solution → use least squares to find the best approximate solution',
+      },
+      {
+        type: 'text',
+        content: '**The Normal Equations — Connecting Everything**\n\nThe least squares problem $\\min_{\\mathbf{x}} \\|A\\mathbf{x} - \\mathbf{b}\\|_2$ leads to the **normal equations**:\n$$A^T A \\hat{\\mathbf{x}} = A^T \\mathbf{b}$$\n\nWhy "normal"? Because the residual $\\mathbf{r} = \\mathbf{b} - A\\hat{\\mathbf{x}}$ is **normal** (perpendicular) to $\\text{col}(A)$.\n\nThis uses almost everything in this primer:\n- $(A^T A)$ is symmetric (transpose identity)\n- $(A^T A)$ is SPD when $A$ has full column rank (eigenvalue fact)\n- We can apply Cholesky to $A^T A$ (SPD → Cholesky)\n- Or use QR: $A = QR$ → $\\hat{\\mathbf{x}} = R^{-1} Q^T \\mathbf{b}$ (orthogonality)\n- The condition number $\\kappa_2(A^T A) = \\kappa_2(A)^2$ — squaring worsens conditioning!',
+      },
+    ],
+    quiz: [
+      {
+        id: 'q-c0t4-1',
+        question: 'For A = [[2, 0], [0, 5]], what are the singular values of A?',
+        options: ['2 and 5', '4 and 25', '√2 and √5', '√29'],
+        correctIndex: 0,
+        explanation: 'For a diagonal matrix with positive entries, the singular values equal the diagonal entries: σ₁ = 5, σ₂ = 2 (ordered σ₁ ≥ σ₂). So the singular values are 5 and 2. (AᵀA = [[4,0],[0,25]], eigenvalues 4 and 25, square roots give 2 and 5.)',
+        topicId: 'c0t4',
+      },
+      {
+        id: 'q-c0t4-2',
+        question: 'The condition number κ₂(A) = σ_max / σ_min. If σ_max = 100 and σ_min = 0.01, what is κ₂(A)?',
+        options: ['100.01', '10000', '1', '99.99'],
+        correctIndex: 1,
+        explanation: 'κ₂(A) = σ_max / σ_min = 100 / 0.01 = 10000. This is a very ill-conditioned matrix — solving Ax = b could lose up to 4 decimal digits of accuracy.',
+        topicId: 'c0t4',
+      },
+      {
+        id: 'q-c0t4-3',
+        question: 'A has full column rank. Which statement about AᵀA is correct?',
+        options: [
+          'AᵀA is symmetric but may be singular',
+          'AᵀA is symmetric positive definite (SPD)',
+          'AᵀA = AᵀA only if A is square',
+          'AᵀA has the same eigenvalues as A',
+        ],
+        correctIndex: 1,
+        explanation: 'When A has full column rank, AᵀA is SPD: it is symmetric by (AᵀA)ᵀ = AᵀA, and positive definite because xᵀ(AᵀA)x = ‖Ax‖₂² > 0 for all x ≠ 0 (since Ax = 0 only if x = 0 when A has full column rank).',
+        topicId: 'c0t4',
+      },
+      {
+        id: 'q-c0t4-4',
+        question: 'Why is solving the normal equations AᵀAx̂ = Aᵀb potentially less stable than using QR factorization?',
+        options: [
+          'AᵀA is not always invertible',
+          'κ₂(AᵀA) = κ₂(A)² — squaring the condition number doubles the potential error',
+          'QR is faster than solving the normal equations',
+          'The normal equations do not give the least squares solution',
+        ],
+        correctIndex: 1,
+        explanation: 'κ₂(AᵀA) = (σ_max/σ_min)² = κ₂(A)². Squaring the condition number means if A is moderately ill-conditioned (κ₂ = 10⁶), then AᵀA has κ₂ = 10¹², potentially causing catastrophic loss of precision. QR avoids forming AᵀA entirely.',
+        topicId: 'c0t4',
+      },
+    ],
+  },
+];
+
+// ============================================================
 // CHAPTER 1: SCIENTIFIC COMPUTING (L1.1 – L1.3)
 // ============================================================
 
@@ -1290,6 +1730,16 @@ const chapter3Topics: Topic[] = [
 // ============================================================
 
 export const chapters: Chapter[] = [
+  {
+    id: 'ch0',
+    number: 0,
+    title: 'Linear Algebra Primer',
+    subtitle: 'Matrices, Invertibility, Orthogonality & SVD',
+    bgImage: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?w=1200&q=80',
+    accentColor: '#6B4C9A',
+    icon: '📐',
+    topics: chapter0Topics,
+  },
   {
     id: 'ch1',
     number: 1,
