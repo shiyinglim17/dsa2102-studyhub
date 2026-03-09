@@ -14,53 +14,96 @@ interface TopicViewProps {
   onNavigate: (view: string, chapterId?: string, topicId?: string) => void;
 }
 
-function parseMarkdown(text: string): React.ReactNode {
-  // Simple markdown parser for bold, italic, inline code, line breaks
-  const lines = text.split('\n');
-  return lines.map((line, i) => {
-    if (line === '') return <br key={i} />;
-    // Bold
-    const parts = line.split(/(\*\*[^*]+\*\*)/g);
-    const rendered = parts.map((part, j) => {
-      if (part.startsWith('**') && part.endsWith('**')) {
-        return <strong key={j} style={{ color: 'oklch(0.28 0.06 40)' }}>{part.slice(2, -2)}</strong>;
+function renderInline(text: string): React.ReactNode {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, j) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={j} style={{ color: 'oklch(0.28 0.06 40)' }}>{part.slice(2, -2)}</strong>;
+    }
+    const codeParts = part.split(/(`[^`]+`)/g);
+    return codeParts.map((cp, k) => {
+      if (cp.startsWith('`') && cp.endsWith('`')) {
+        return <code key={k} className="px-1 py-0.5 rounded text-xs" style={{ background: 'oklch(0.92 0.04 75)', color: 'oklch(0.32 0.08 40)', fontFamily: 'monospace' }}>{cp.slice(1, -1)}</code>;
       }
-      // Inline code
-      const codeParts = part.split(/(`[^`]+`)/g);
-      return codeParts.map((cp, k) => {
-        if (cp.startsWith('`') && cp.endsWith('`')) {
-          return <code key={k} className="px-1 py-0.5 rounded text-xs" style={{ background: 'oklch(0.92 0.04 75)', color: 'oklch(0.32 0.08 40)', fontFamily: 'monospace' }}>{cp.slice(1, -1)}</code>;
-        }
-        return <span key={k}>{cp}</span>;
-      });
+      return <span key={k}>{cp}</span>;
     });
-    // Check if it's a list item
+  });
+}
+
+function parseMarkdown(text: string): React.ReactNode {
+  // Simple markdown parser for bold, italic, inline code, line breaks, and pipe tables
+  const lines = text.split('\n');
+  const result: React.ReactNode[] = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    // Detect pipe table: line starts and ends with | (or has multiple | separators)
+    const isTableRow = (l: string) => l.trim().startsWith('|') && l.trim().endsWith('|') && l.includes('|', 1);
+    const isSeparator = (l: string) => /^\|[-:\s|]+\|$/.test(l.trim());
+    if (isTableRow(line)) {
+      // Collect all consecutive table lines
+      const tableLines: string[] = [];
+      while (i < lines.length && (isTableRow(lines[i]) || isSeparator(lines[i]))) {
+        tableLines.push(lines[i]);
+        i++;
+      }
+      // Parse header, separator, and body rows
+      const nonSep = tableLines.filter(l => !isSeparator(l));
+      const parseRow = (l: string) => l.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(c => c.trim());
+      const [headerRow, ...bodyRows] = nonSep;
+      const headers = parseRow(headerRow);
+      result.push(
+        <div key={i} className="overflow-x-auto my-4">
+          <table className="w-full text-sm border-collapse" style={{ fontFamily: 'Lora, serif' }}>
+            <thead>
+              <tr style={{ background: 'oklch(0.72 0.15 65 / 0.15)' }}>
+                {headers.map((h, hi) => (
+                  <th key={hi} className="px-3 py-2 text-left font-semibold border" style={{ borderColor: 'oklch(0.72 0.15 65 / 0.3)', color: 'oklch(0.32 0.08 50)' }}>
+                    {renderInline(h)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {bodyRows.map((row, ri) => (
+                <tr key={ri} style={{ background: ri % 2 === 0 ? 'oklch(0.98 0.01 75 / 0.5)' : 'white' }}>
+                  {parseRow(row).map((cell, ci) => (
+                    <td key={ci} className="px-3 py-1.5 border" style={{ borderColor: 'oklch(0.72 0.15 65 / 0.2)', color: 'oklch(0.32 0.04 50)' }}>
+                      {renderInline(cell)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+      continue;
+    }
+    if (line === '') { result.push(<br key={i} />); i++; continue; }
+    const rendered = renderInline(line);
     if (line.startsWith('- ') || line.startsWith('• ')) {
-      return (
+      result.push(
         <div key={i} className="flex items-start gap-2 my-0.5">
           <span style={{ color: 'oklch(0.72 0.15 65)', marginTop: '0.25rem', flexShrink: 0 }}>•</span>
           <span>{rendered}</span>
         </div>
       );
-    }
-    if (/^\d+\./.test(line)) {
+    } else if (/^\d+\./.test(line)) {
       const num = line.match(/^(\d+)\./)?.[1];
       const rest = line.replace(/^\d+\.\s*/, '');
-      const restParts = rest.split(/(\*\*[^*]+\*\*)/g).map((part, j) => {
-        if (part.startsWith('**') && part.endsWith('**')) {
-          return <strong key={j} style={{ color: 'oklch(0.28 0.06 40)' }}>{part.slice(2, -2)}</strong>;
-        }
-        return <span key={j}>{part}</span>;
-      });
-      return (
+      result.push(
         <div key={i} className="flex items-start gap-2 my-0.5">
           <span className="flex-shrink-0 w-5 h-5 rounded-full text-xs flex items-center justify-center font-bold" style={{ background: 'oklch(0.72 0.15 65 / 0.2)', color: 'oklch(0.45 0.12 55)' }}>{num}</span>
-          <span>{restParts}</span>
+          <span>{renderInline(rest)}</span>
         </div>
       );
+    } else {
+      result.push(<p key={i} className="my-0.5">{rendered}</p>);
     }
-    return <p key={i} className="my-0.5">{rendered}</p>;
-  });
+    i++;
+  }
+  return result;
 }
 
 function ContentBlockRenderer({ block }: { block: ContentBlock }) {
