@@ -18,6 +18,7 @@ import 'katex/dist/katex.min.css';
 
 type Mode = 'attempt' | 'guide' | 'solution';
 type DifficultyFilter = 'all' | 'easy' | 'medium' | 'hard';
+type SourceFilter = 'all' | 'tutorial' | 'midterm';
 
 interface QuestionState {
   mode: Mode;
@@ -297,23 +298,38 @@ function QuestionCard({ question, index }: { question: BankQuestion; index: numb
 
 // ─── Question Group Panel ─────────────────────────────────────────────────────
 
-function GroupPanel({ group, searchQuery, difficultyFilter }: {
+function GroupPanel({ group, searchQuery, difficultyFilter, sourceFilter }: {
   group: typeof questionGroups[0];
   searchQuery: string;
   difficultyFilter: DifficultyFilter;
+  sourceFilter: SourceFilter;
 }) {
   const [open, setOpen] = useState(false);
 
   const filteredQuestions = useMemo(() => {
-    return group.questions.filter(q => {
-      const matchesDiff = difficultyFilter === 'all' || q.difficulty === difficultyFilter;
-      const matchesSearch = !searchQuery ||
-        q.topic.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        q.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        q.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
-      return matchesDiff && matchesSearch;
-    });
-  }, [group.questions, searchQuery, difficultyFilter]);
+    // Priority: 0 = past midterm (most likely tested), 1 = tutorial mirroring midterm style, 2 = exploratory tutorial
+    function getPriority(q: BankQuestion): number {
+      const src = q.source.toLowerCase();
+      if (src.includes('midterm') || src.includes('ma2213')) return 0;
+      // Tutorial questions that closely mirror midterm patterns (computation, T/F, operation count)
+      const midtermStyleTags = ['computation', 'true-false', 'operation-count', 'normal-equations', 'residual', 'QR', 'Gram-Schmidt', 'Householder', 'Givens', 'LU', 'Cholesky', 'SPD'];
+      if (src.includes('tutorial') && q.tags.some(t => midtermStyleTags.some(m => t.toLowerCase().includes(m.toLowerCase())))) return 1;
+      return 2;
+    }
+    return group.questions
+      .filter(q => {
+        const matchesDiff = difficultyFilter === 'all' || q.difficulty === difficultyFilter;
+        const matchesSearch = !searchQuery ||
+          q.topic.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          q.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          q.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
+        const matchesSource = sourceFilter === 'all' ||
+          (sourceFilter === 'tutorial' && q.source.toLowerCase().includes('tutorial')) ||
+          (sourceFilter === 'midterm' && (q.source.toLowerCase().includes('midterm') || q.source.toLowerCase().includes('ma2213')));
+        return matchesDiff && matchesSearch && matchesSource;
+      })
+      .sort((a, b) => getPriority(a) - getPriority(b));
+  }, [group.questions, searchQuery, difficultyFilter, sourceFilter]);
 
   if (filteredQuestions.length === 0) return null;
 
@@ -377,6 +393,7 @@ export default function QuestionBankView() {
   const [difficultyFilter, setDifficultyFilter] = useState<DifficultyFilter>('all');
   const [chapterFilter, setChapterFilter] = useState<string>('all');
   const [expandAll, setExpandAll] = useState(false);
+  const [sourceFilter, setSourceFilter] = useState<SourceFilter>('all');
 
   const totalQuestions = allBankQuestions.length;
   const easyTotal = allBankQuestions.filter(q => q.difficulty === 'easy').length;
@@ -491,6 +508,34 @@ export default function QuestionBankView() {
               </button>
             ))}
           </div>
+
+          {/* Source filter */}
+          <div className="flex items-center gap-1 bg-amber-50 rounded-xl p-1 border border-amber-200">
+            <button
+              onClick={() => setSourceFilter('all')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                sourceFilter === 'all' ? 'bg-amber-600 text-white shadow-sm' : 'text-stone-500 hover:text-stone-700'
+              }`}
+            >
+              All Sources
+            </button>
+            <button
+              onClick={() => setSourceFilter('tutorial')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 ${
+                sourceFilter === 'tutorial' ? 'bg-emerald-600 text-white shadow-sm' : 'text-stone-500 hover:text-stone-700'
+              }`}
+            >
+              <BookOpen className="w-3 h-3" /> Tutorial Only
+            </button>
+            <button
+              onClick={() => setSourceFilter('midterm')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 ${
+                sourceFilter === 'midterm' ? 'bg-rose-600 text-white shadow-sm' : 'text-stone-500 hover:text-stone-700'
+              }`}
+            >
+              <Trophy className="w-3 h-3" /> Past Midterm
+            </button>
+          </div>
         </div>
       </div>
 
@@ -511,6 +556,7 @@ export default function QuestionBankView() {
             group={group}
             searchQuery={searchQuery}
             difficultyFilter={difficultyFilter}
+            sourceFilter={sourceFilter}
           />
         ))}
 
