@@ -889,6 +889,25 @@ const chapter1Topics: Topic[] = [
         content: 'import numpy as np\n\n# ── MACHINE EPSILON ────────────────────────────────────────────────────────\nprint(np.finfo(np.float32).eps)   # single: 1.1920929e-07  (2^-23)\nprint(np.finfo(np.float64).eps)   # double: 2.220446e-16   (2^-52)\n\n# ── OVERFLOW THRESHOLD ─────────────────────────────────────────────────────\nprint(np.finfo(np.float32).max)   # single: 3.4028235e+38\nprint(np.finfo(np.float64).max)   # double: 1.7976931e+308\n\n# ── UNDERFLOW THRESHOLD (smallest normal) ──────────────────────────────────\nprint(np.finfo(np.float32).tiny)  # single: 1.1754944e-38  (2^-126)\nprint(np.finfo(np.float64).tiny)  # double: 2.2250739e-308 (2^-1022)\n\n# ── PRECISION LOSS IN SINGLE ───────────────────────────────────────────────\nx32 = np.float32(1.0) + np.float32(1e-7)\nx64 = np.float64(1.0) + np.float64(1e-7)\nprint(x32 == 1.0)   # True  — 1e-7 is near ε_mach, addition is lost!\nprint(x64 == 1.0)   # False — double has enough precision to detect the change\n\n# ── MEMORY COMPARISON ──────────────────────────────────────────────────────\na32 = np.zeros((1000, 1000), dtype=np.float32)\na64 = np.zeros((1000, 1000), dtype=np.float64)\nprint(a32.nbytes)   # 4,000,000 bytes  (4 MB)\nprint(a64.nbytes)   # 8,000,000 bytes  (8 MB) — double uses 2× memory',
       },
       {
+        type: 'highlight',
+        title: '⚡ Exam Technique: Floating-Point Bit Decoding (5 Steps in 30 Seconds)',
+        content: 'This method works for almost every floating-point decoding question. Memorise this checklist and you can decode any IEEE 754 number — half, single, or double — in under 30 seconds.',
+      },
+      {
+        type: 'text',
+        content: '**Half-precision format recap:** 1 sign bit | 5 exponent bits | 10 fraction bits | bias = 2^(5−1) − 1 = 15\n\n**Step 1 — Split the bits**\nWrite out the number and divide into three groups: sign | exponent | fraction.\nExample (a): 0100110001110000 → 0 | 10011 | 0001110000\n\n**Step 2 — Determine the case (most important step)**\nCheck the exponent bits FIRST — this tells you which formula to use:\n\n| Exponent bits | Meaning |\n|---|---|\n| all 0s (00000) | Subnormal number |\n| all 1s (11111) | Special: ∞ or NaN |\n| anything else | Normal number |\n\n**Step 3 — Determine the sign**\nSign bit 0 → positive (+1). Sign bit 1 → negative (−1).\n\n**Step 4 — Compute the stored exponent**\nConvert exponent bits to decimal, then subtract the bias.\nE = exponent_decimal − bias\nExample: 10011₂ = 19, so E = 19 − 15 = 4\n\n**Step 5 — Compute the significand**\n- Normal: significand = 1.f (leading 1 is implicit, not stored)\n- Subnormal: significand = 0.f (no leading 1); exponent fixed at 1 − bias = −14\n\n**Step 6 — Combine**\n- Normal: (−1)^s × (1.f) × 2^E\n- Subnormal: (−1)^s × (0.f) × 2^(1−bias)',
+      },
+      {
+        type: 'example',
+        title: 'Worked Examples: Applying the 5-Step Method',
+        content: 'Example (a): 0 | 10011 | 0001110000\nExponent = 10011₂ = 19, not all-0 or all-1 → NORMAL\nSign: (−1)^0 = +\nE = 19 − 15 = 4\nSignificand: 1.0001110000 = 1 + 1/16 + 1/32 + 1/64 = 1.109375\nFinal: 1.109375 × 2^4 = 17.75\n\nExample (b): 1 | 00000 | 1111111111\nExponent = 00000 → SUBNORMAL\nSign: (−1)^1 = −\nSignificand: 0.1111111111 = 1 − 2^(−10)\nExponent fixed: 2^(1−15) = 2^(−14)\nFinal: −(1 − 2^(−10)) × 2^(−14)\n\nExample (c): 0 | 11111 | 0000000000\nExponent = 11111 → SPECIAL\nFraction = all zeros → +∞',
+      },
+      {
+        type: 'highlight',
+        title: '🧠 Decision Tree (Memorise This)',
+        content: 'Check exponent bits first:\n\n1. Exponent = 11111 (all ones)\n   → fraction = 0: ±∞\n   → fraction ≠ 0: NaN\n\n2. Exponent = 00000 (all zeros)\n   → SUBNORMAL: significand = 0.f, exponent = 1 − bias\n\n3. Otherwise\n   → NORMAL: significand = 1.f, exponent = stored − bias\n\nThen apply: (−1)^s × significand × 2^exponent\n\n**10-Second Mental Checklist:**\n1. Split bits into sign | exponent | fraction\n2. Check exponent pattern (all-0, all-1, or normal)\n3. Compute E = exponent_decimal − bias\n4. Write 1.f (normal) or 0.f (subnormal)\n5. Multiply by 2^E and apply sign',
+      },
+      {
         type: 'video',
         videoId: 'PZRI1IfStY0',
         videoTitle: 'Floating Point Numbers - Computerphile',
