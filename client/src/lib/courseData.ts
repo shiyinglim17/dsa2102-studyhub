@@ -769,6 +769,26 @@ const chapter1Topics: Topic[] = [
         description: 'The smallest positive number representable in IEEE 754 double precision (a subnormal). Below this, the result flushes to zero (hard underflow).',
       },
       {
+        id: 'fp-single-epsilon',
+        title: 'Machine Epsilon — Single Precision (float32)',
+        latex: '\\epsilon_{\\text{mach}}^{\\text{single}} = 2^{-(24-1)} = 2^{-23} \\approx 1.19 \\times 10^{-7}',
+        description: 'For IEEE 754 single precision: p = 24 (23 stored fraction bits + 1 implicit leading 1). Machine epsilon is 2^{-23} ≈ 1.19 × 10⁻⁷, about 10⁸ times larger than double precision.',
+        isKey: true,
+      },
+      {
+        id: 'fp-single-overflow',
+        title: 'Overflow Threshold — Single Precision (float32)',
+        latex: '\\Omega_{\\text{single}} = (2 - 2^{-23}) \\times 2^{127} \\approx 3.4 \\times 10^{38}',
+        description: 'The largest finite single-precision number. Any result exceeding this overflows to ±Inf. Compare to double: Ω_double ≈ 1.8 × 10³⁰⁸.',
+        isKey: true,
+      },
+      {
+        id: 'fp-single-underflow',
+        title: 'Underflow Threshold — Smallest Normal Single Precision',
+        latex: '\\lambda_{\\text{single}} = 2^{-126} \\approx 1.18 \\times 10^{-38}',
+        description: 'The smallest positive normalised single-precision number. Below this the number becomes subnormal. Compare to double: λ_double = 2^{-1022} ≈ 2.2 × 10⁻³⁰⁸.',
+      },
+      {
         id: 'bin-add-rules',
         title: 'Binary Addition Rules (Cheatsheet)',
         latex: '0+0=0 \\quad 0+1=1 \\quad 1+0=1 \\quad 1+1=10_{\\,2} \\quad 1+1+1=11_{\\,2}',
@@ -814,6 +834,14 @@ const chapter1Topics: Topic[] = [
       },
       {
         type: 'text',
+        content: '**IEEE 754 Single Precision Standard (float32)**\n\nSingle precision uses 32 bits total:\n- 1 sign bit (s)\n- 8 exponent bits — stored as unsigned integer; actual exponent = stored value − bias (127)\n- 23 fraction bits (b₁b₂...b₂₃) — implicit leading 1, so p = 24 bits of precision total\n- Total: 32 bits\n- Bias = 127 (so stored exponent = actual exponent + 127)\n\nThe value stored is: (−1)ˢ × 1.b₁b₂...b₂₃ × 2^(stored_exponent − 127)\n\nKey parameters:\n  ε_mach = 2⁻²³ ≈ 1.19 × 10⁻⁷ (about 7 significant decimal digits)\n  Ω ≈ 3.4 × 10³⁸ (overflow threshold)\n  λ = 2⁻¹²⁶ ≈ 1.18 × 10⁻³⁸ (smallest normal number)',
+      },
+      {
+        type: 'text',
+        content: '**Single vs Double Precision: Side-by-Side Comparison**\n\n| Property | Single (float32) | Double (float64) |\n|---|---|---|\n| Total bits | 32 | 64 |\n| Sign bits | 1 | 1 |\n| Exponent bits | 8 | 11 |\n| Fraction bits | 23 | 52 |\n| Precision p | 24 bits | 53 bits |\n| Bias | 127 | 1023 |\n| ε_mach | 2⁻²³ ≈ 1.19×10⁻⁷ | 2⁻⁵² ≈ 2.22×10⁻¹⁶ |\n| Decimal digits | ~7 | ~16 |\n| Max normal (Ω) | ≈3.4×10³⁸ | ≈1.8×10³⁰⁸ |\n| Min normal (λ) | ≈1.18×10⁻³⁸ | ≈2.2×10⁻³⁰⁸ |\n| Min subnormal | ≈1.4×10⁻⁴⁵ | ≈5×10⁻³²⁴ |\n| e_max | 127 | 1023 |\n| e_min | −126 | −1022 |\n\n**When to use each:**\n- **Double** (default in R, MATLAB, Python numpy float64): use whenever accuracy matters — scientific computing, numerical methods, DSA2102 assignments\n- **Single** (numpy float32, GPU deep learning): use when memory/speed is critical and ~7 significant digits is sufficient (e.g., neural network weights)',
+      },
+      {
+        type: 'text',
         content: '**Special Values in IEEE 754**\n\n- **Exponent all zeros, fraction all zeros**: ±0\n- **Exponent all zeros, fraction nonzero**: Subnormal numbers (gradual underflow)\n- **Exponent all ones, fraction all zeros**: ±Inf (overflow)\n- **Exponent all ones, fraction nonzero**: NaN (Not a Number, e.g., 0/0, √(-1))',
       },
       {
@@ -854,6 +882,11 @@ const chapter1Topics: Topic[] = [
         type: 'example',
         title: 'Example: Computing Variance Stably',
         content: 'Two-pass algorithm (numerically stable):\n1. First pass: compute mean μ = (1/n)Σxᵢ\n2. Second pass: compute s² = (1/(n-1))Σ(xᵢ - μ)²\n\nOne-pass formula Σxᵢ² - n·μ² can suffer catastrophic cancellation when variance is small relative to the mean.',
+      },
+      {
+        type: 'code',
+        title: 'Example: Single vs Double Precision in Python (NumPy)',
+        content: 'import numpy as np\n\n# ── MACHINE EPSILON ────────────────────────────────────────────────────────\nprint(np.finfo(np.float32).eps)   # single: 1.1920929e-07  (2^-23)\nprint(np.finfo(np.float64).eps)   # double: 2.220446e-16   (2^-52)\n\n# ── OVERFLOW THRESHOLD ─────────────────────────────────────────────────────\nprint(np.finfo(np.float32).max)   # single: 3.4028235e+38\nprint(np.finfo(np.float64).max)   # double: 1.7976931e+308\n\n# ── UNDERFLOW THRESHOLD (smallest normal) ──────────────────────────────────\nprint(np.finfo(np.float32).tiny)  # single: 1.1754944e-38  (2^-126)\nprint(np.finfo(np.float64).tiny)  # double: 2.2250739e-308 (2^-1022)\n\n# ── PRECISION LOSS IN SINGLE ───────────────────────────────────────────────\nx32 = np.float32(1.0) + np.float32(1e-7)\nx64 = np.float64(1.0) + np.float64(1e-7)\nprint(x32 == 1.0)   # True  — 1e-7 is near ε_mach, addition is lost!\nprint(x64 == 1.0)   # False — double has enough precision to detect the change\n\n# ── MEMORY COMPARISON ──────────────────────────────────────────────────────\na32 = np.zeros((1000, 1000), dtype=np.float32)\na64 = np.zeros((1000, 1000), dtype=np.float64)\nprint(a32.nbytes)   # 4,000,000 bytes  (4 MB)\nprint(a64.nbytes)   # 8,000,000 bytes  (8 MB) — double uses 2× memory',
       },
       {
         type: 'video',
@@ -908,6 +941,32 @@ const chapter1Topics: Topic[] = [
         ],
         correctIndex: 1,
         explanation: 'The floating point exponent means there are the same number of representable values in each interval [2^k, 2^(k+1)], so the density is higher near zero and lower for large magnitudes.',
+        topicId: 'c1t3',
+      },
+      {
+        id: 'q-c1t3-5',
+        question: 'In IEEE 754 single precision (float32), how many bits are allocated to the exponent and fraction respectively?',
+        options: [
+          '8 exponent bits, 23 fraction bits',
+          '11 exponent bits, 20 fraction bits',
+          '7 exponent bits, 24 fraction bits',
+          '10 exponent bits, 21 fraction bits',
+        ],
+        correctIndex: 0,
+        explanation: 'IEEE 754 single precision: 1 sign + 8 exponent + 23 fraction = 32 bits total. The bias is 127, giving e_max = 127 and e_min = -126. This gives p = 24 bits of precision (23 stored + 1 implicit leading 1).',
+        topicId: 'c1t3',
+      },
+      {
+        id: 'q-c1t3-6',
+        question: 'Machine epsilon for single precision is approximately 1.19 × 10⁻⁷. If you compute (float32(1.0) + float32(5e-8)), what is the most likely result?',
+        options: [
+          '1.00000005 (the addition is captured exactly)',
+          '1.0 (the addition is completely lost — 5e-8 < ε_mach/2)',
+          'NaN (addition of different magnitudes is undefined)',
+          '1.0000001 (rounded up to nearest representable value)',
+        ],
+        correctIndex: 1,
+        explanation: 'ε_mach for float32 ≈ 1.19 × 10⁻⁷. Since 5 × 10⁻⁸ < ε_mach/2, when 1.0 + 5e-8 is rounded to the nearest float32, it rounds back to 1.0. The addition is completely lost. This illustrates why single precision is dangerous for iterative numerical algorithms where small increments accumulate.',
         topicId: 'c1t3',
       },
     ],
