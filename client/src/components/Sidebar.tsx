@@ -2,7 +2,7 @@
 // Design: "Golden Hour Study Retreat" — dark mahogany sidebar with golden accents
 
 import { useState } from 'react';
-import { BookOpen, BarChart3, Search, ChevronDown, ChevronRight, Leaf, Waves, Mountain, Home, Library } from 'lucide-react';
+import { BookOpen, BarChart3, Search, ChevronDown, ChevronRight, Leaf, Waves, Mountain, Home, Library, Code2 } from 'lucide-react';
 import { chapters } from '@/lib/courseData';
 import { useProgress } from '@/contexts/ProgressContext';
 
@@ -104,6 +104,15 @@ export function Sidebar({ currentView, currentChapter, currentTopic, onNavigate 
           <Library className="w-4 h-4 flex-shrink-0" />
           <span>Question Bank</span>
           <span className="ml-auto text-xs font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'oklch(0.72 0.15 65 / 0.25)', color: 'oklch(0.82 0.12 75)', fontSize: '0.65rem' }}>NEW</span>
+        </button>
+
+        {/* Pseudocode Bank */}
+        <button
+          onClick={() => onNavigate('pseudocodes')}
+          className={`nav-item w-full ${currentView === 'pseudocodes' ? 'active' : ''}`}
+        >
+          <Code2 className="w-4 h-4 flex-shrink-0" />
+          <span>Pseudocode Bank</span>
         </button>
 
         {/* Divider */}

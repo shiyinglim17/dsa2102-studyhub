@@ -17,8 +17,9 @@ import FormulaView from "./views/FormulaView";
 import SearchView from "./views/SearchView";
 import QuizView from "./views/QuizView";
 import QuestionBankView from "./views/QuestionBankView";
+import PseudocodeView from "./views/PseudocodeView";
 
-export type ViewType = 'home' | 'chapter' | 'topic' | 'progress' | 'formulas' | 'search' | 'quiz' | 'questionbank';
+export type ViewType = 'home' | 'chapter' | 'topic' | 'progress' | 'formulas' | 'search' | 'quiz' | 'questionbank' | 'pseudocodes';
 
 function StudyHub() {
   const [currentView, setCurrentView] = useState<ViewType>('home');
@@ -50,6 +51,8 @@ function StudyHub() {
         return <QuizView chapterId={currentChapter} onNavigate={handleNavigate} />;
       case 'questionbank':
         return <QuestionBankView />;
+      case 'pseudocodes':
+        return <PseudocodeView />;
       default:
         return <HomeView onNavigate={handleNavigate} />;
     }
