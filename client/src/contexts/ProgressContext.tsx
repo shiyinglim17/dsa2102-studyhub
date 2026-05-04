@@ -38,8 +38,12 @@ export const BANK_TYPE_TO_TOPIC: Record<QuestionType, { chapterId: string; topic
   least_squares:        { chapterId: 'ch3', topicId: 'c3t1' },
   qr_factorization:     { chapterId: 'ch3', topicId: 'c3t2' },
   householder_givens:   { chapterId: 'ch3', topicId: 'c3t4' },
-  theory_mcq:           { chapterId: 'ch1', topicId: 'c1t1' },
-  complexity:           { chapterId: 'ch2', topicId: 'c2t2' },
+  theory_mcq:               { chapterId: 'ch1', topicId: 'c1t1' },
+  complexity:               { chapterId: 'ch2', topicId: 'c2t2' },
+  eigenvalues_svd:          { chapterId: 'ch4', topicId: 'c4t1' },
+  eigenvalue_algorithms:    { chapterId: 'ch4', topicId: 'c4t2' },
+  interpolation:            { chapterId: 'ch5', topicId: 'c5t1' },
+  integration_differentiation: { chapterId: 'ch6', topicId: 'c6t1' },
 };
 
 export interface BankGroupProgress {

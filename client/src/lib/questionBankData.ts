@@ -27,7 +27,11 @@ export type QuestionType =
   | 'qr_factorization'
   | 'householder_givens'
   | 'theory_mcq'
-  | 'complexity';
+  | 'complexity'
+  | 'eigenvalues_svd'
+  | 'eigenvalue_algorithms'
+  | 'interpolation'
+  | 'integration_differentiation';
 
 export interface QuestionGroup {
   type: QuestionType;
@@ -1150,6 +1154,55 @@ const householderGivensQuestions: BankQuestion[] = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
+// CHAPTER 4-6 QUESTIONS (Eigenvalues, Interpolation, Integration/Differentiation)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const eigenvaluesSvdQuestions: BankQuestion[] = [
+  { id: 'tut6-ev-1', qnum: 'Q1', difficulty: 'medium', source: 'Tutorial 6', type: 'eigenvalues_svd', topic: 'Eigenvalue computation', question: 'Find eigenvalues of A = [[1,-1],[2,4]]', solution: 'Characteristic polynomial: (λ-1)(λ-4) + 2 = λ² - 5λ + 6 = (λ-2)(λ-3). Eigenvalues: 2 and 3.', guide: 'Solve det(A - λI) = 0. For 2×2: det([[1-λ,-1],[2,4-λ]]) = (1-λ)(4-λ) + 2 = λ² - 5λ + 6 = 0.', tags: ['eigenvalues', 'characteristic-polynomial', 'tutorial'] },
+  { id: 'tut6-ev-2', qnum: 'Q2', difficulty: 'medium', source: 'Tutorial 6', type: 'eigenvalues_svd', topic: 'Row operations and eigenvalues', question: 'Verify that row operations can change eigenvalues', solution: 'GE preserves invertibility/singularity but not eigenvalues. A = [[1,-1],[2,4]] has eigenvalues {2,3}, but after row ops becomes [[1,-1],[0,6]] with eigenvalues {1,6}.', guide: 'Eigenvalues are NOT invariant under row operations (unlike determinant, trace). Row ops change the characteristic polynomial.', tags: ['eigenvalues', 'row-operations', 'tutorial'] },
+  { id: 'tut6-ev-3', qnum: 'Q3', difficulty: 'hard', source: 'Tutorial 6', type: 'eigenvalues_svd', topic: 'SVD computation', question: 'Compute AᵀA, AAᵀ, and SVD for A = [[1,1,0],[0,1,1]]', solution: 'AᵀA eigenvalues: {3,1,0}. AAᵀ eigenvalues: {3,1}. SVD: σ₁=√3, σ₂=1.', guide: 'SVD: A = UΣVᵀ. Singular values are √(eigenvalues of AᵀA) = √(eigenvalues of AAᵀ).', tags: ['SVD', 'eigenvalues', 'tutorial'] },
+  { id: 'tut6-ev-4', qnum: 'Q4', difficulty: 'hard', source: 'Tutorial 6', type: 'eigenvalues_svd', topic: 'SVD and eigenvalues', question: 'Prove: if [[0,A],[Aᵀ,0]][[u],[v]]=λ[[u],[v]] with ||u||=||v||, then |λ| is singular value of A', solution: 'Av=λu, Aᵀu=λv ⟹ AᵀAv=λ²v, AAᵀu=λ²u. So λ² is eigenvalue of AᵀA and AAᵀ, hence |λ| is singular value.', guide: 'The augmented matrix [[0,A],[Aᵀ,0]] has eigenvalues ±σᵢ where σᵢ are singular values of A.', tags: ['SVD', 'eigenvalues', 'proof', 'tutorial'] },
+  { id: 'tut6-ev-5', qnum: 'Q5', difficulty: 'medium', source: 'Tutorial 6', type: 'eigenvalues_svd', topic: 'Fibonacci and eigenvalues', question: 'Fibonacci sequence and eigenvalues: verify Fₙ = (1/√5)[φⁿ - ψⁿ]', solution: 'A = [[0,1],[1,1]] has eigenvalues φ=(1+√5)/2 and ψ=(1-√5)/2. Aⁿ(0,1)ᵀ = (Fₙ, Fₙ₊₁)ᵀ. Binet formula follows from eigenvalue decomposition.', guide: 'Diagonalize A = PDP⁻¹, then Aⁿ = PDⁿP⁻¹. Extract Fibonacci from the result.', tags: ['eigenvalues', 'Fibonacci', 'tutorial'] },
+];
+
+const eigenvalueAlgorithmsQuestions: BankQuestion[] = [
+  { id: 'tut7-ea-1', qnum: 'Q1', difficulty: 'medium', source: 'Tutorial 7', type: 'eigenvalue_algorithms', topic: 'Eigenvalue computation', question: 'Find characteristic polynomial and eigenvalues of A = [[-2,4],[1,1]]', solution: 'pₐ(λ) = λ² + λ - 6 = (λ-2)(λ+3). Eigenvalues: 2 and -3. Eigenvectors: (1,1)ᵀ and (-4,1)ᵀ.', guide: 'Compute det(A - λI) and solve = 0. Then find eigenvectors by solving (A - λI)v = 0.', tags: ['eigenvalues', 'characteristic-polynomial', 'tutorial'] },
+  { id: 'tut7-ea-2', qnum: 'Q2', difficulty: 'medium', source: 'Tutorial 7', type: 'eigenvalue_algorithms', topic: 'Householder eigenvalues', question: 'Householder transformation H = I - 2vvᵀ/(vᵀv): what are its eigenvalues?', solution: 'H is orthogonal (H=Hᵀ=H⁻¹), so eigenvalues are ±1. Hv = -v (eigenvalue -1), Hu = u for u⊥v (eigenvalue 1 with multiplicity n-1).', guide: 'Orthogonal matrices have eigenvalues on the unit circle. Householder reflections are orthogonal with det = -1.', tags: ['Householder', 'eigenvalues', 'tutorial'] },
+  { id: 'tut7-ea-3', qnum: 'Q3', difficulty: 'medium', source: 'Tutorial 7', type: 'eigenvalue_algorithms', topic: 'Rotation matrix eigenvalues', question: 'Rotation matrix eigenvalues: R = [[cos θ, sin θ],[-sin θ, cos θ]]', solution: 'Characteristic polynomial: λ² - 2λ cos θ + 1 = 0. Eigenvalues: λ = e^(iθ) and e^(-iθ) (complex).', guide: 'Rotation matrices are orthogonal with det = +1. Eigenvalues are complex conjugates on the unit circle.', tags: ['eigenvalues', 'rotation', 'complex', 'tutorial'] },
+  { id: 'tut7-ea-4', qnum: 'Q4', difficulty: 'hard', source: 'Tutorial 7', type: 'eigenvalue_algorithms', topic: 'Power iteration', question: 'Power iteration on M = [[-1,0,0],[1,2,0],[1,-1,-3]]: one iteration with u₀=(0,1,0)ᵀ', solution: 'Mu₀ = (0,2,-1)ᵀ → normalized u₁ = (0,1,-1/2)ᵀ. Rayleigh quotient: 1.4. Inverse iteration with σ=1.4 converges to dominant eigenvector.', guide: 'Power iteration: u_{k+1} = Au_k / ||Au_k||. Rayleigh quotient: λ ≈ uᵀAu / uᵀu.', tags: ['power-iteration', 'eigenvalues', 'tutorial'] },
+  { id: 'tut7-ea-5', qnum: 'Q5', difficulty: 'medium', source: 'Tutorial 7', type: 'eigenvalue_algorithms', topic: 'Flop counts', question: 'Flop counts for eigenvalue algorithms: power iteration, inverse iteration, QR iteration', solution: 'Power: O(n²) per iteration. Inverse: O(n³) or O(n²) if LU precomputed. QR: O(n³) per iteration.', guide: 'Power iteration is cheapest per iteration but converges slowly. QR iteration is most expensive but converges to all eigenvalues.', tags: ['flop-count', 'eigenvalues', 'tutorial'] },
+];
+
+const interpolationQuestions: BankQuestion[] = [
+  { id: 'tut8-int-1', qnum: 'Q1', difficulty: 'medium', source: 'Tutorial 8', type: 'interpolation', topic: 'Lagrange interpolation', question: 'Find interpolating polynomial for (0,1), (2,2), (3,4)', solution: 'P₂(x) = 1 - (1/2)x + (1/2)x² via monomial or Lagrange basis.', guide: 'Lagrange basis: ℓᵢ(x) = ∏_{j≠i} (x-x_j)/(x_i-x_j). Then p(x) = ∑ f_i ℓᵢ(x).', tags: ['interpolation', 'Lagrange', 'tutorial'] },
+  { id: 'tut8-int-2', qnum: 'Q2', difficulty: 'medium', source: 'Tutorial 8', type: 'interpolation', topic: 'Quadratic interpolation', question: 'Quadratic interpolation: given f(-3)=-9, f(1)=3, f(2)=-4, find f(-2), f(-1), f(0), f(3)', solution: 'P₂(x) = 6 - x - 2x². f(-2)=0, f(-1)=5, f(0)=6, f(3)=-15.', guide: 'Solve Vandermonde system: [[1,-3,9],[1,1,1],[1,2,4]] [a,b,c]ᵀ = [-9,3,-4]ᵀ.', tags: ['interpolation', 'quadratic', 'tutorial'] },
+  { id: 'tut8-int-3', qnum: 'Q3', difficulty: 'hard', source: 'Tutorial 8', type: 'interpolation', topic: 'Hermite interpolation', question: 'Hermite interpolation: cubic P with P(0)=f₀, P(1)=f₁, P\'(0)=f\'₀, P\'(1)=f\'₁', solution: 'P(x) = f₀ + f\'₀x + (-3f₀+3f₁-2f\'₀-f\'₁)x² + (2f₀-2f₁+f\'₀+f\'₁)x³.', guide: 'Hermite interpolation matches both function values and derivatives at endpoints. Cubic has 4 DOF for 4 constraints.', tags: ['interpolation', 'Hermite', 'tutorial'] },
+  { id: 'tut8-int-4', qnum: 'Q4', difficulty: 'medium', source: 'Tutorial 8', type: 'interpolation', topic: 'Interpolation bases', question: 'Compare monomial, Lagrange, Newton bases for (-1,2), (0,3), (1,6)', solution: 'All give p(x) = x² + 2x + 3. Monomial: Vandermonde. Lagrange: ℓᵢ basis. Newton: divided differences.', guide: 'Monomial: ill-conditioned for large n. Lagrange: easy to evaluate. Newton: efficient for adding new points.', tags: ['interpolation', 'bases', 'tutorial'] },
+  { id: 'tut8-int-5', qnum: 'Q5', difficulty: 'hard', source: 'Tutorial 8', type: 'interpolation', topic: 'Least-squares', question: 'Least-squares line fit for (-1,-10), (0,-4), (1,0), (2,14)', solution: 'AᵀA = [[4,2],[2,6]]. Solution: (-19/5, 38/5).', guide: 'Normal equations: AᵀAx = Aᵀb. For line y=ax+b, A = [[1,x_i]] for each point.', tags: ['least-squares', 'fitting', 'tutorial'] },
+  { id: 'tut8-int-6', qnum: 'Q6', difficulty: 'hard', source: 'Tutorial 8', type: 'interpolation', topic: 'Least-squares polynomial', question: 'Least-squares parabola fit for (-1,-10), (0,-4), (1,0), (2,14)', solution: 'AᵀA = [[4,2,6],[2,6,8],[6,8,18]]. Solution: (-29/5, 28/5, 2).', guide: 'For parabola y=ax²+bx+c, A = [[x_i², x_i, 1]] for each point. Solve AᵀAx = Aᵀb.', tags: ['least-squares', 'polynomial', 'tutorial'] },
+  { id: 'tut8-int-7', qnum: 'Q7', difficulty: 'medium', source: 'Tutorial 8', type: 'interpolation', topic: 'Lagrange interpolation', question: 'Cubic Lagrange interpolation for (-1,-10), (0,-4), (1,0), (2,14)', solution: 'p(x) = 2x³ - x² + 3x - 4.', guide: 'With 4 points, cubic is unique. Use Lagrange basis or solve Vandermonde system.', tags: ['interpolation', 'Lagrange', 'cubic', 'tutorial'] },
+  { id: 'tut8-int-8', qnum: 'Q8', difficulty: 'hard', source: 'Tutorial 8', type: 'interpolation', topic: 'Newton interpolation', question: 'Cubic Newton interpolation using divided differences', solution: 'Divided differences: f[x₀]=-10, f[x₀,x₁]=6, f[x₀,x₁,x₂]=-1, f[x₀,x₁,x₂,x₃]=2. p(x) = -10 + 6(x+1) - (x+1)x + 2(x+1)x(x-1).', guide: 'Newton form: p(x) = f[x₀] + f[x₀,x₁](x-x₀) + ... + f[x₀,...,x_n]∏(x-x_i). Divided differences computed recursively.', tags: ['interpolation', 'Newton', 'divided-differences', 'tutorial'] },
+  { id: 'tut9-op-1', qnum: 'Q1', difficulty: 'hard', source: 'Tutorial 9', type: 'interpolation', topic: 'Chebyshev nodes', question: 'Verify Chebyshev node equivalence when m=n+1', solution: 'Substitution j=k+1 with n=m-1 shows both expressions generate same set of values.', guide: 'Chebyshev nodes minimize Runge phenomenon. Two equivalent formulas: cos((k+1/2)π/(n+1)) and cos((2j-1)π/(2m)).', tags: ['Chebyshev', 'nodes', 'tutorial'] },
+  { id: 'tut9-op-2', qnum: 'Q2', difficulty: 'hard', source: 'Tutorial 9', type: 'interpolation', topic: 'Legendre polynomials', question: 'Legendre polynomial orthogonality: verify ∫₋₁¹ Pᵢ(x)Pⱼ(x)dx = 0', solution: 'Direct integration: ∫₋₁¹ 1·x dx = 0, ∫₋₁¹ 1·(3x²-1)/2 dx = 0, ∫₋₁¹ x·(3x²-1)/2 dx = 0.', guide: 'Legendre polynomials are orthogonal on [-1,1] with weight 1. Used in Gauss-Legendre quadrature.', tags: ['Legendre', 'orthogonal-polynomials', 'tutorial'] },
+  { id: 'tut9-op-3', qnum: 'Q3', difficulty: 'medium', source: 'Tutorial 9', type: 'interpolation', topic: 'Chebyshev nodes', question: 'Chebyshev nodes on [a,b]', solution: 'xₖ = (a+b)/2 + (b-a)/2 cos((k+1/2)π/(n+1)). Examples: [-1,1], [-2,2], [4,12].', guide: 'Linear transformation of Chebyshev nodes from [-1,1] to [a,b]. Preserves optimality for minimizing Runge phenomenon.', tags: ['Chebyshev', 'nodes', 'tutorial'] },
+  { id: 'tut9-op-4', qnum: 'Q4', difficulty: 'hard', source: 'Tutorial 9', type: 'interpolation', topic: 'Splines', question: 'Piecewise quadratic spline twice differentiable at x=1', solution: 'System of 6 equations with continuity and derivative matching constraints.', guide: 'Splines: piecewise polynomials with continuity constraints. Quadratic spline: 3 coefficients per piece, 2 continuity conditions per junction.', tags: ['splines', 'quadratic', 'tutorial'] },
+  { id: 'tut9-op-5', qnum: 'Q5', difficulty: 'hard', source: 'Tutorial 9', type: 'interpolation', topic: 'Cubic splines', question: 'Natural cubic spline for (-1,1), (1,2), (2,3)', solution: 'System of 8 equations with boundary conditions S double-prime(-1)=S double-prime(2)=0.', guide: 'Natural cubic spline: S double-prime(a)=S double-prime(b)=0. Tridiagonal system for second derivatives. Smooth and stable.', tags: ['splines', 'cubic', 'natural', 'tutorial'] },
+  { id: 'tut9-op-6', qnum: 'Q6', difficulty: 'hard', source: 'Tutorial 9', type: 'interpolation', topic: 'Chebyshev polynomials', question: 'Chebyshev polynomials: compute T3, T4, T5, T6 using recurrence', solution: 'T3=4x^3-3x, T4=8x^4-8x^2+1, T5=16x^5-20x^3+5x, T6=32x^6-48x^4+18x^2-1.', guide: 'Recurrence: T(n+1)(x) = 2xT_n(x) - T(n-1)(x) with T_0=1, T_1=x. Chebyshev polynomials have minimal max norm on [-1,1].', tags: ['Chebyshev', 'polynomials', 'recurrence', 'tutorial'] },
+  { id: 'tut9-op-7', qnum: 'Q7', difficulty: 'hard', source: 'Tutorial 9', type: 'interpolation', topic: 'Chebyshev interpolation', question: 'Chebyshev interpolation of cos(x) on [0,2*pi] using 6 nodes', solution: 'Polynomial: 0.9736137 + 0.2992113*x - 1.025028*x^2 + 0.3111183*x^3 - 0.0247580*x^4.', guide: 'Chebyshev nodes minimize interpolation error. Transform nodes from [-1,1] to [0,2*pi], then interpolate.', tags: ['Chebyshev', 'interpolation', 'tutorial'] },
+];
+
+const integrationDifferentiationQuestions: BankQuestion[] = [
+  { id: 'tut10-int-1', qnum: 'Q1', difficulty: 'medium', source: 'Tutorial 10', type: 'integration_differentiation', topic: 'Newton-Cotes rules', question: 'Two-point open Newton-Cotes rule on [a,b]', solution: 'Integral from a to b of p(x)dx = (b-a)/2 [f(s) + f(t)] where s=(2a+b)/3, t=(a+2b)/3.', guide: 'Newton-Cotes: integrate Lagrange interpolant. Open rules: nodes interior to [a,b]. Closed rules: include endpoints.', tags: ['Newton-Cotes', 'integration', 'tutorial'] },
+  { id: 'tut10-int-2', qnum: 'Q2', difficulty: 'medium', source: 'Tutorial 10', type: 'integration_differentiation', topic: 'Composite rules', question: 'Composite midpoint rule: Integral from 0 to 1 of 1/sqrt(x) dx with m=1,2,4', solution: 'm=1: 1.4142, m=2: 1.5774, m=4: 1.6988.', guide: 'Composite rule: subdivide [a,b] into m panels, apply simple rule to each, sum. Midpoint rule: evaluate at center of each panel.', tags: ['midpoint-rule', 'integration', 'tutorial'] },
+  { id: 'tut10-int-3', qnum: 'Q3', difficulty: 'medium', source: 'Tutorial 10', type: 'integration_differentiation', topic: 'Flop counts', question: 'Composite trapezoid rule flop count for k panels', solution: 'k+1 function evals, 2k-1 additions, 1 subtraction, 2 multiplications, 2 divisions.', guide: 'Trapezoid rule: T_k(f) = (h/2)[f(a) + 2*sum(f(x_i)) + f(b)]. Error: O(h^2) per panel, O(h) globally.', tags: ['trapezoid-rule', 'flop-count', 'tutorial'] },
+  { id: 'tut10-int-4', qnum: 'Q4', difficulty: 'hard', source: 'Tutorial 10', type: 'integration_differentiation', topic: 'Simpson\'s rule', question: 'Simpson\'s rule for Integral from -2 to 2 of x^2*e^(-x^2/2) dx', solution: 'Simpson: 0.7217882, Composite midpoint (2): 2.426123, Composite trapezoid (4): 1.75440.', guide: 'Simpson: S(f) = (h/6)[f(a) + 4f((a+b)/2) + f(b)]. Error: O(h^4) per panel. Exact for polynomials up to degree 3.', tags: ['Simpson', 'integration', 'tutorial'] },
+  { id: 'tut10-int-5', qnum: 'Q5', difficulty: 'hard', source: 'Tutorial 10', type: 'integration_differentiation', topic: 'Numerical integration', question: 'Numerical integration of x^(3/2)*e^(-x) on [0,2]', solution: 'Midpoint: 0.7357589, Composite trapezoid (2): 0.5592724, Composite Simpson (4): 0.6026623.', guide: 'Compare different rules and panel counts. Simpson usually most accurate for smooth functions.', tags: ['integration', 'composite-rules', 'tutorial'] },
+  { id: 'tut10-int-6', qnum: 'Q6', difficulty: 'hard', source: 'Tutorial 10', type: 'integration_differentiation', topic: 'Error function', question: 'Error function: approximate erf(1.99) and erf(2.01)', solution: 'Composite trapezoid (n=5): 0.9940108. Composite Simpson (n=6): 0.9955213.', guide: 'erf(x) = (2/sqrt(pi)) * Integral from 0 to x of e^(-t^2) dt. No closed form; must use numerical integration.', tags: ['error-function', 'integration', 'tutorial'] },
+  { id: 'tut10-int-7', qnum: 'Q7', difficulty: 'hard', source: 'Tutorial 10', type: 'integration_differentiation', topic: 'Numerical differentiation', question: 'Centered difference for g\'\'(-1) where g(x)=x^2*e^(-x^2/2), h=0.01', solution: 'g\'\'(-1) approx -1.212991, exact = -1.213061, error approx 7.076e-5.', guide: 'Centered difference: f\'\'(x) approx [f(x+h) - 2f(x) + f(x-h)]/h^2. Error: O(h^2). More accurate than forward/backward differences.', tags: ['differentiation', 'centered-difference', 'tutorial'] },
+  { id: 'tut10-int-8', qnum: 'Q8', difficulty: 'hard', source: 'Tutorial 10', type: 'integration_differentiation', topic: 'Adaptive quadrature', question: 'Adaptive quadrature for Integral from 0 to 2 of sin(x^2)dx with tolerance 0.05', solution: 'Final approximation: 0.8131573 using multiple subintervals.', guide: 'Adaptive quadrature: recursively subdivide where error estimate exceeds tolerance. Efficient for functions with varying smoothness.', tags: ['adaptive-quadrature', 'integration', 'tutorial'] },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
 // QUESTION GROUPS (organized by type)
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -1244,6 +1297,42 @@ export const questionGroups: QuestionGroup[] = [
     description: 'Householder reflections, Givens rotations, operation counts, stability comparison.',
     questions: householderGivensQuestions,
   },
+  {
+    type: 'eigenvalues_svd',
+    label: 'Eigenvalues & SVD',
+    icon: '🔢',
+    color: 'from-cyan-600 to-blue-400',
+    chapterRef: 'Chapter 4',
+    description: 'Eigenvalue computation, SVD, characteristic polynomials, matrix properties.',
+    questions: eigenvaluesSvdQuestions,
+  },
+  {
+    type: 'eigenvalue_algorithms',
+    label: 'Eigenvalue Algorithms',
+    icon: 'λ',
+    color: 'from-blue-600 to-indigo-400',
+    chapterRef: 'Chapter 4',
+    description: 'Power iteration, inverse iteration, QR iteration, flop counts.',
+    questions: eigenvalueAlgorithmsQuestions,
+  },
+  {
+    type: 'interpolation',
+    label: 'Interpolation',
+    icon: 'P',
+    color: 'from-green-600 to-emerald-400',
+    chapterRef: 'Chapter 5',
+    description: 'Lagrange, Newton, Hermite interpolation, splines, Chebyshev nodes, least squares.',
+    questions: interpolationQuestions,
+  },
+  {
+    type: 'integration_differentiation',
+    label: 'Integration & Differentiation',
+    icon: 'I',
+    color: 'from-orange-600 to-amber-400',
+    chapterRef: 'Chapter 6',
+    description: 'Newton-Cotes rules, Simpson rule, numerical differentiation, adaptive quadrature.',
+    questions: integrationDifferentiationQuestions,
+  },
 ];
 
 // All questions flat list
@@ -1283,4 +1372,8 @@ export const typeLabels: Record<QuestionType, string> = {
   householder_givens: 'Householder & Givens',
   theory_mcq: 'Theory / T-F',
   complexity: 'Complexity',
+  eigenvalues_svd: 'Eigenvalues & SVD',
+  eigenvalue_algorithms: 'Eigenvalue Algorithms',
+  interpolation: 'Interpolation',
+  integration_differentiation: 'Integration & Differentiation',
 };
