@@ -18,7 +18,7 @@ import 'katex/dist/katex.min.css';
 
 type Mode = 'attempt' | 'guide' | 'solution';
 type DifficultyFilter = 'all' | 'easy' | 'medium' | 'hard';
-type SourceFilter = 'all' | 'tutorial' | 'midterm';
+type SourceFilter = 'all' | 'tutorial' | 'midterm' | 'final';
 
 interface QuestionState {
   mode: Mode;
@@ -343,7 +343,8 @@ function GroupPanel({ group, searchQuery, difficultyFilter, sourceFilter }: {
           q.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
         const matchesSource = sourceFilter === 'all' ||
           (sourceFilter === 'tutorial' && q.source.toLowerCase().includes('tutorial')) ||
-          (sourceFilter === 'midterm' && (q.source.toLowerCase().includes('midterm') || q.source.toLowerCase().includes('ma2213')));
+          (sourceFilter === 'midterm' && (q.source.toLowerCase().includes('midterm') || q.source.toLowerCase().includes('ma2213'))) ||
+          (sourceFilter === 'final' && q.source.toLowerCase().includes('final'));
         return matchesDiff && matchesSearch && matchesSource;
       })
       .sort((a, b) => getPriority(a) - getPriority(b));
@@ -552,6 +553,14 @@ export default function QuestionBankView() {
               }`}
             >
               <Trophy className="w-3 h-3" /> Past Midterm
+            </button>
+            <button
+              onClick={() => setSourceFilter('final')}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                sourceFilter === 'final' ? 'bg-rose-600 text-white shadow-sm' : 'text-stone-500 hover:text-stone-700'
+              }`}
+            >
+              <Star className="w-3 h-3 inline mr-1" /> Past Finals
             </button>
           </div>
         </div>

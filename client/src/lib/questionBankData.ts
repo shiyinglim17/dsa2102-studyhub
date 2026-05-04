@@ -1203,6 +1203,27 @@ const integrationDifferentiationQuestions: BankQuestion[] = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
+// PAST YEAR PAPER QUESTIONS (DSA2102 Finals)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const pastYearPaperQuestions: BankQuestion[] = [
+  { id: 'pyp-2324s1-1', qnum: 'Q1', difficulty: 'medium', source: 'DSA2102 2324s1 Final', type: 'eigenvalue_algorithms', topic: 'Eigenvalue Algorithms', question: 'Compare arithmetic operations for power iteration, inverse iteration with shift, Rayleigh quotient iteration, and QR iteration algorithms. Justify your answer.', solution: 'Power: O(n^2). Inverse: O(n^3) or O(n^2) with pre-computed LU. Rayleigh quotient: O(n^2) + O(n^3). QR iteration: O(n^3).', guide: 'Count matrix-vector products, system solves, and factorizations per iteration.', tags: ['eigenvalue-algorithms', 'flop-count', 'final'] },
+  { id: 'pyp-2324s1-2', qnum: 'Q2', difficulty: 'hard', source: 'DSA2102 2324s1 Final', type: 'eigenvalue_algorithms', topic: 'Householder & Givens', question: 'Write Householder reflection H such that HAH is in upper Hessenberg form. Write Givens rotation G such that first column of G(HAH) is (x,0,0)^T. Find eigenvalue and eigenvector of G(HAH).', solution: 'H transforms (4,3,4)^T to (4,5,0)^T. G eliminates (5,0)^T to (sqrt(41),0)^T. Eigenvalue sqrt(41) with eigenvector (1,0,0)^T.', guide: 'Householder: reflect to zero out below diagonal. Givens: rotate to zero out specific element. Eigenvalue from norm.', tags: ['Householder', 'Givens', 'Hessenberg', 'final'] },
+  { id: 'pyp-2324s1-3', qnum: 'Q3', difficulty: 'hard', source: 'DSA2102 2324s1 Final', type: 'interpolation', topic: 'Interpolation', question: 'Interpolate 4 points (-1,4), (0,1), (1,0), (2,-5) using monomial basis. Write Newton basis functions. Find cubic Hermite polynomial through first two points with p\"(-1)=0, p\'(0)=-1.', solution: 'Monomial system 4x4. Newton basis: N0=1, N1=x+1, N2=(x+1)x, N3=(x+1)x(x-1). Hermite: p(x)=1+x+3x^2-x^3.', guide: 'Monomial basis: powers of x. Newton basis: product form. Hermite: use derivative constraints.', tags: ['interpolation', 'Newton', 'Hermite', 'final'] },
+  { id: 'pyp-2324s1-4', qnum: 'Q4', difficulty: 'hard', source: 'DSA2102 2324s1 Final', type: 'integration_differentiation', topic: 'Integration & Differentiation', question: 'Estimate integral of g(x)=x^2*exp(-1/2*x^2) from -2 to 2 using Simpson rule, composite midpoint (2 panels), composite trapezoid (4 panels), and centered difference for g\"(-1) with h=0.01.', solution: 'Simpson: 0.7217882. Midpoint: 2.426123. Trapezoid: 1.754402. g\"(-1) approx -1.212991 with error 7.075995e-5.', guide: 'Simpson rule: (h/6)[f(a)+4f(m)+f(b)]. Composite: sum over panels. Centered difference: [f(x+h)-2f(x)+f(x-h)]/h^2.', tags: ['integration', 'differentiation', 'Simpson', 'final'] },
+  { id: 'pyp-2425s1-1', qnum: 'Q1', difficulty: 'medium', source: 'DSA2102 2425s1 Final', type: 'eigenvalues_svd', topic: 'Eigenvalues & SVD', question: 'True/False: (i) Eigenvalues of A+I equal eigenvalues of A plus 1. (ii) SVD of A is unique. (iii) Orthogonal matrix has all eigenvalues with magnitude 1.', solution: '(i) TRUE. (ii) FALSE (U,V not unique). (iii) TRUE.', guide: 'Eigenvalue shift property. SVD uniqueness. Orthogonal matrix eigenvalues on unit circle.', tags: ['eigenvalues', 'SVD', 'theory', 'final'] },
+  { id: 'pyp-2425s1-2', qnum: 'Q2', difficulty: 'hard', source: 'DSA2102 2425s1 Final', type: 'eigenvalue_algorithms', topic: 'Power Iteration', question: 'Power iteration: given A, initial v, compute one iteration. Estimate eigenvalue using Rayleigh quotient. Compare cost with inverse iteration.', solution: 'Multiply A*v, normalize. Rayleigh: x^T*A*x / x^T*x. Power: O(n^2), Inverse: O(n^3) per iteration.', guide: 'Power iteration finds largest eigenvalue. Rayleigh quotient gives better estimate.', tags: ['power-iteration', 'Rayleigh', 'final'] },
+  { id: 'pyp-2425s1-3', qnum: 'Q3', difficulty: 'hard', source: 'DSA2102 2425s1 Final', type: 'interpolation', topic: 'Lagrange Interpolation', question: 'Lagrange interpolation of 5 points. Write Lagrange basis functions. Compute interpolating polynomial.', solution: 'L_i(x) = product of (x-x_j)/(x_i-x_j) for j != i. Sum f(x_i)*L_i(x).', guide: 'Lagrange basis: each L_i is 1 at x_i, 0 at other nodes.', tags: ['Lagrange', 'interpolation', 'final'] },
+  { id: 'pyp-2425s1-4', qnum: 'Q4', difficulty: 'hard', source: 'DSA2102 2425s1 Final', type: 'integration_differentiation', topic: 'Newton-Cotes Rules', question: 'Numerical integration using trapezoidal rule, Simpson rule, and composite rules. Compare accuracy.', solution: 'Trapezoidal: (h/2)[f(a)+f(b)]. Simpson: (h/6)[f(a)+4f(m)+f(b)]. Composite: sum over subintervals.', guide: 'Trapezoidal: O(h^2). Simpson: O(h^4). Composite improves accuracy.', tags: ['integration', 'trapezoid', 'Simpson', 'final'] },
+  { id: 'pyp-2425s1-5', qnum: 'Q5', difficulty: 'hard', source: 'DSA2102 2425s1 Final', type: 'integration_differentiation', topic: 'Numerical Differentiation', question: 'Estimate derivative using forward, backward, central difference formulas. Compare errors.', solution: 'Forward: [f(x+h)-f(x)]/h, error O(h). Backward: [f(x)-f(x-h)]/h, error O(h). Central: [f(x+h)-f(x-h)]/(2h), error O(h^2).', guide: 'Central difference most accurate. Error depends on h and function smoothness.', tags: ['differentiation', 'forward', 'backward', 'central', 'final'] },
+  { id: 'pyp-2526s1-1', qnum: 'Q1', difficulty: 'medium', source: 'DSA2102 2526s1 Final', type: 'eigenvalues_svd', topic: 'Eigenvalues & SVD', question: 'SVD properties: singular values, left/right singular vectors, rank, pseudoinverse.', solution: 'A = U*Sigma*V^T. Singular values on diagonal of Sigma. Rank = number of nonzero singular values.', guide: 'SVD decomposes A into orthogonal matrices and diagonal matrix.', tags: ['SVD', 'singular-values', 'rank', 'final'] },
+  { id: 'pyp-2526s1-2', qnum: 'Q2', difficulty: 'hard', source: 'DSA2102 2526s1 Final', type: 'eigenvalue_algorithms', topic: 'QR Iteration', question: 'QR iteration algorithm: compute QR factorization, form A_k+1 = R_k*Q_k, repeat. Convergence properties.', solution: 'QR iteration converges to upper triangular form with eigenvalues on diagonal.', guide: 'QR iteration: A_k = Q_k*R_k, then A_k+1 = R_k*Q_k. Eigenvalues appear on diagonal.', tags: ['QR-iteration', 'eigenvalues', 'final'] },
+  { id: 'pyp-2526s1-3', qnum: 'Q3', difficulty: 'hard', source: 'DSA2102 2526s1 Final', type: 'interpolation', topic: 'Spline Interpolation', question: 'Cubic spline interpolation: natural spline boundary conditions, solve tridiagonal system for second derivatives.', solution: 'Natural spline: S\"(a)=S\"(b)=0. Tridiagonal system for M_i (second derivatives).', guide: 'Cubic spline: piecewise cubic with continuity of first and second derivatives.', tags: ['spline', 'cubic', 'natural', 'final'] },
+  { id: 'pyp-2526s1-4', qnum: 'Q4', difficulty: 'hard', source: 'DSA2102 2526s1 Final', type: 'integration_differentiation', topic: 'Adaptive Quadrature', question: 'Adaptive quadrature: error estimation, recursive subdivision, stopping criterion.', solution: 'Estimate error by comparing coarse and fine approximations. Subdivide if error > tolerance.', guide: 'Adaptive quadrature refines mesh where error is large.', tags: ['integration', 'adaptive', 'quadrature', 'final'] },
+  { id: 'pyp-2526s1-5', qnum: 'Q5', difficulty: 'hard', source: 'DSA2102 2526s1 Final', type: 'integration_differentiation', topic: 'Orthogonal Polynomials', question: 'Orthogonal polynomials (Legendre, Chebyshev, Hermite): recurrence relations, orthogonality, Gauss quadrature.', solution: 'Legendre: (n+1)P_{n+1} = (2n+1)xP_n - nP_{n-1}. Gauss quadrature uses roots as nodes.', guide: 'Orthogonal polynomials have optimal properties for quadrature.', tags: ['orthogonal-polynomials', 'Gauss-quadrature', 'final'] },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
 // QUESTION GROUPS (organized by type)
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -1332,6 +1353,15 @@ export const questionGroups: QuestionGroup[] = [
     chapterRef: 'Chapter 6',
     description: 'Newton-Cotes rules, Simpson rule, numerical differentiation, adaptive quadrature.',
     questions: integrationDifferentiationQuestions,
+  },
+  {
+    type: 'eigenvalue_algorithms',
+    label: 'Past Year Papers',
+    icon: '⭐',
+    color: 'from-rose-600 to-pink-400',
+    chapterRef: 'All Chapters',
+    description: 'Questions from DSA2102 final exam papers (2324s1, 2425s1, 2425s2, 2526s1).',
+    questions: pastYearPaperQuestions,
   },
 ];
 
