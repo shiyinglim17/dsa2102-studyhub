@@ -32,10 +32,10 @@ export default function HomeView({ onNavigate }: HomeViewProps) {
             DSA2102 · Numerical Computations
           </p>
           <h1 className="text-3xl md:text-4xl font-bold mb-3" style={{ fontFamily: 'Cormorant Garamond, serif', color: 'oklch(0.97 0.02 85)', lineHeight: 1.2 }}>
-            Your Midterm<br />Study Retreat
+            Your Final Exam<br />Study Retreat
           </h1>
           <p className="text-sm max-w-md" style={{ color: 'oklch(0.85 0.04 80)', fontFamily: 'Lora, serif', lineHeight: 1.6 }}>
-            Master Chapters 1–3 with curated notes, formula cards, mini-tests, and progress tracking. Start with the <strong style={{ color: 'oklch(0.88 0.10 75)' }}>LA Primer</strong> if you need a refresher. Midterm: <strong style={{ color: 'oklch(0.88 0.10 75)' }}>10 March</strong>.
+            Master Chapters 1–6 with curated notes, formula cards, 60+ tutorial questions, and progress tracking. Start with the <strong style={{ color: 'oklch(0.88 0.10 75)' }}>LA Primer</strong> if you need a refresher. Final Exam: <strong style={{ color: 'oklch(0.88 0.10 75)' }}>Tomorrow</strong>.
           </p>
           {overallMastery > 0 && (
             <div className="mt-4 flex items-center gap-3">
@@ -87,7 +87,7 @@ export default function HomeView({ onNavigate }: HomeViewProps) {
         {/* Chapter Overview */}
         <div>
           <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'Cormorant Garamond, serif', color: 'oklch(0.28 0.06 40)' }}>
-            Midterm Chapters
+            Final Exam Chapters
           </h2>
           <div className="space-y-3">
             {chapters.map(ch => {

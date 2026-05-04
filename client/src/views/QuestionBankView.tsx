@@ -121,9 +121,27 @@ function QuestionCard({ question, index }: { question: BankQuestion; index: numb
             <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${diffClass}`}>
               {question.difficulty.charAt(0).toUpperCase() + question.difficulty.slice(1)}
             </span>
-            <span className="text-xs text-stone-500 bg-stone-100 px-2 py-0.5 rounded-full">
-              {question.source}
-            </span>
+            {/* Source badge with color coding */}
+            {question.source.includes('Tutorial') && (
+              <span className="text-xs text-blue-600 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full font-medium">
+                📚 {question.source}
+              </span>
+            )}
+            {question.source.includes('Midterm') && (
+              <span className="text-xs text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full font-medium">
+                🎯 {question.source}
+              </span>
+            )}
+            {question.source.includes('Final') && (
+              <span className="text-xs text-purple-600 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-full font-medium">
+                ⭐ {question.source}
+              </span>
+            )}
+            {!question.source.includes('Tutorial') && !question.source.includes('Midterm') && !question.source.includes('Final') && (
+              <span className="text-xs text-stone-500 bg-stone-100 px-2 py-0.5 rounded-full">
+                {question.source}
+              </span>
+            )}
             <span className="text-xs text-stone-400 font-mono">{question.qnum}</span>
             {state.attempted && (
               <span className="text-xs text-green-600 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full flex items-center gap-1">
