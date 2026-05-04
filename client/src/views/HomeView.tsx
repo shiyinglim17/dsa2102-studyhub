@@ -35,7 +35,7 @@ export default function HomeView({ onNavigate }: HomeViewProps) {
             Your Final Exam<br />Study Retreat
           </h1>
           <p className="text-sm max-w-md" style={{ color: 'oklch(0.85 0.04 80)', fontFamily: 'Lora, serif', lineHeight: 1.6 }}>
-            Master Chapters 1–6 with curated notes, formula cards, 60+ tutorial questions, and progress tracking. Start with the <strong style={{ color: 'oklch(0.88 0.10 75)' }}>LA Primer</strong> if you need a refresher. Final Exam: <strong style={{ color: 'oklch(0.88 0.10 75)' }}>Tomorrow</strong>.
+            Master Chapters 1–6 with curated notes, formula cards, 60+ tutorial questions, and progress tracking. Start with the <strong style={{ color: 'oklch(0.88 0.10 75)' }}>LA Primer</strong> if you need a refresher. Final Exam: <strong style={{ color: 'oklch(0.88 0.10 75)' }}>5 May, 5–7pm</strong>.
           </p>
           {overallMastery > 0 && (
             <div className="mt-4 flex items-center gap-3">
@@ -163,25 +163,6 @@ export default function HomeView({ onNavigate }: HomeViewProps) {
           </div>
         )}
 
-        {/* Midterm Info */}
-        <div className="rounded-xl p-5 mb-6" style={{ background: 'linear-gradient(135deg, oklch(0.96 0.03 210), oklch(0.94 0.05 200))', border: '1.5px solid oklch(0.75 0.10 210)' }}>
-          <h3 className="font-bold mb-3" style={{ fontFamily: 'Cormorant Garamond, serif', color: 'oklch(0.22 0.05 220)', fontSize: '1.1rem' }}>
-            📋 Midterm Exam Details
-          </h3>
-          <div className="grid grid-cols-2 gap-3 text-sm" style={{ fontFamily: 'Lora, serif' }}>
-            {[
-              ['Date', '10 March 2026, 18:00'],
-              ['Scope', 'Chapters 1–3 (L1.1–L3.8)'],
-              ['Tutorials', 'Tutorials 1–5'],
-              ['Format', 'Closed-book, no help-sheet'],
-            ].map(([label, value]) => (
-              <div key={label}>
-                <p className="text-xs uppercase tracking-wide mb-0.5" style={{ color: 'oklch(0.52 0.08 210)' }}>{label}</p>
-                <p className="font-medium" style={{ color: 'oklch(0.25 0.06 220)' }}>{value}</p>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );

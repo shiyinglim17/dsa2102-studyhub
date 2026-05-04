@@ -44,6 +44,7 @@ export const BANK_TYPE_TO_TOPIC: Record<QuestionType, { chapterId: string; topic
   eigenvalue_algorithms:    { chapterId: 'ch4', topicId: 'c4t2' },
   interpolation:            { chapterId: 'ch5', topicId: 'c5t1' },
   integration_differentiation: { chapterId: 'ch6', topicId: 'c6t1' },
+  past_year_papers:         { chapterId: 'ch1', topicId: 'c1t1' }, // Maps to all chapters
 };
 
 export interface BankGroupProgress {

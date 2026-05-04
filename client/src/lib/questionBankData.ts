@@ -31,7 +31,8 @@ export type QuestionType =
   | 'eigenvalues_svd'
   | 'eigenvalue_algorithms'
   | 'interpolation'
-  | 'integration_differentiation';
+  | 'integration_differentiation'
+  | 'past_year_papers';
 
 export interface QuestionGroup {
   type: QuestionType;
@@ -1355,7 +1356,7 @@ export const questionGroups: QuestionGroup[] = [
     questions: integrationDifferentiationQuestions,
   },
   {
-    type: 'eigenvalue_algorithms',
+    type: 'past_year_papers',
     label: 'Past Year Papers',
     icon: '⭐',
     color: 'from-rose-600 to-pink-400',
@@ -1406,4 +1407,5 @@ export const typeLabels: Record<QuestionType, string> = {
   eigenvalue_algorithms: 'Eigenvalue Algorithms',
   interpolation: 'Interpolation',
   integration_differentiation: 'Integration & Differentiation',
+  past_year_papers: 'Past Year Papers',
 };
