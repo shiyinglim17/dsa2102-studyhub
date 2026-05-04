@@ -432,7 +432,7 @@ export default function PseudocodeView() {
                 ? 'Ch 4'
                 : ch === 'chapter5'
                 ? 'Ch 5'
-                : 'Ch 6';}
+                : 'Ch 6'
             const cfg = ch !== 'all' ? chapterConfig[ch] : null;
             return (
               <button
