@@ -24,7 +24,7 @@ export default function FormulaView({ onNavigate }: FormulaViewProps) {
           📐 Formula Sheet
         </h1>
         <p className="text-sm mb-4" style={{ fontFamily: 'Lora, serif', color: 'oklch(0.55 0.06 60)' }}>
-          All key formulas from Chapters 1–3. Starred formulas are highest priority for the midterm.
+          All key formulas from Chapters 0–6. Starred formulas are highest priority for the final exam.
         </p>
 
         {/* Filters */}
@@ -44,7 +44,7 @@ export default function FormulaView({ onNavigate }: FormulaViewProps) {
           </button>
           <div className="flex items-center gap-1">
             <Filter className="w-3.5 h-3.5" style={{ color: 'oklch(0.55 0.06 60)' }} />
-            {['all', 'ch1', 'ch2', 'ch3'].map(id => {
+            {['all', ...chapters.map(c => c.id)].map(id => {
               const ch = chapters.find(c => c.id === id);
               return (
                 <button

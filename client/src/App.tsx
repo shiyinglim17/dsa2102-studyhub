@@ -1,4 +1,4 @@
-// App.tsx — DSA2102 Midterm Study Hub
+// App.tsx — DSA2102 Final Exam Study Hub
 // Design: "Golden Hour Study Retreat" — Bali treehouse aesthetic
 // Layout: Fixed sidebar (dark mahogany) + scrollable main content area
 

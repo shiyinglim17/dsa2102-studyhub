@@ -2,7 +2,7 @@
 // Design: "Golden Hour Study Retreat" — dark mahogany sidebar with golden accents
 
 import { useState } from 'react';
-import { BookOpen, BarChart3, Search, ChevronDown, ChevronRight, Leaf, Waves, Mountain, Home, Library, Code2, GraduationCap } from 'lucide-react';
+import { BookOpen, BarChart3, Search, ChevronDown, ChevronRight, Leaf, Waves, Mountain, Home, Library, Code2, GraduationCap, Zap, TrendingUp, Calculator } from 'lucide-react';
 import { chapters } from '@/lib/courseData';
 import { useProgress } from '@/contexts/ProgressContext';
 
@@ -13,7 +13,7 @@ interface SidebarProps {
   onNavigate: (view: string, chapterId?: string, topicId?: string) => void;
 }
 
-const chapterIcons = [GraduationCap, Waves, Leaf, Mountain];
+const chapterIcons = [GraduationCap, Waves, Leaf, Mountain, Zap, TrendingUp, Calculator];
 
 export function Sidebar({ currentView, currentChapter, currentTopic, onNavigate }: SidebarProps) {
   const [expandedChapters, setExpandedChapters] = useState<Set<string>>(new Set(['ch1']));
@@ -48,12 +48,12 @@ export function Sidebar({ currentView, currentChapter, currentTopic, onNavigate 
               DSA2102
             </h1>
             <p className="text-xs" style={{ color: 'oklch(0.62 0.06 65)', fontFamily: 'Lora, serif' }}>
-              Midterm Study Hub
+              Final Exam Study Hub
             </p>
           </div>
         </div>
         <p className="text-xs mt-2 px-1" style={{ color: 'oklch(0.55 0.06 60)', fontFamily: 'Lora, serif', fontStyle: 'italic' }}>
-          Primer + Chapters 1–3 · L1.1–L3.8 · Tuts 1–5
+          Chapters 0–6 · Weeks 5-13 · Tuts 1–10
         </p>
       </div>
 
@@ -196,7 +196,7 @@ export function Sidebar({ currentView, currentChapter, currentTopic, onNavigate 
       {/* Footer */}
       <div className="px-4 py-3 border-t" style={{ borderColor: 'oklch(0.32 0.06 40)' }}>
         <p className="text-xs text-center" style={{ color: 'oklch(0.45 0.05 60)', fontFamily: 'Lora, serif', fontStyle: 'italic' }}>
-          Midterm: 10 March · Closed-book
+          Final: 5 May · Closed-book
         </p>
       </div>
     </aside>

@@ -68,6 +68,24 @@ const chapterConfig: Record<string, { label: string; accent: string; bg: string;
     bg: 'bg-orange-50',
     border: 'border-orange-200',
   },
+  chapter4: {
+    label: 'Ch 4 — Eigenvalues & SVD',
+    accent: 'text-purple-700',
+    bg: 'bg-purple-50',
+    border: 'border-purple-200',
+  },
+  chapter5: {
+    label: 'Ch 5 — Interpolation',
+    accent: 'text-yellow-700',
+    bg: 'bg-yellow-50',
+    border: 'border-yellow-200',
+  },
+  chapter6: {
+    label: 'Ch 6 — Integration & Differentiation',
+    accent: 'text-green-700',
+    bg: 'bg-green-50',
+    border: 'border-green-200',
+  },
 };
 
 // ─── Section tabs inside each card ───────────────────────────
@@ -307,7 +325,7 @@ export default function PseudocodeView() {
   const [filterChapter, setFilterChapter] = useState<string>('all');
   const [expandAll, setExpandAll] = useState(false);
 
-  const chapters = ['all', 'chapter1', 'chapter2', 'chapter3'];
+  const chapters = ['all', 'chapter1', 'chapter2', 'chapter3', 'chapter4', 'chapter5', 'chapter6'];
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
@@ -334,7 +352,7 @@ export default function PseudocodeView() {
     return g;
   }, [filtered]);
 
-  const chapterOrder = ['chapter1', 'chapter2', 'chapter3'];
+  const chapterOrder = ['chapter1', 'chapter2', 'chapter3', 'chapter4', 'chapter5', 'chapter6'];
 
   return (
     <div className="flex-1 overflow-y-auto bg-stone-50">
@@ -408,7 +426,13 @@ export default function PseudocodeView() {
                 ? 'Ch 1'
                 : ch === 'chapter2'
                 ? 'Ch 2'
-                : 'Ch 3';
+                : ch === 'chapter3'
+                ? 'Ch 3'
+                : ch === 'chapter4'
+                ? 'Ch 4'
+                : ch === 'chapter5'
+                ? 'Ch 5'
+                : 'Ch 6';}
             const cfg = ch !== 'all' ? chapterConfig[ch] : null;
             return (
               <button

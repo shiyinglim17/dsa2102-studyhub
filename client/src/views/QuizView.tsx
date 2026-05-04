@@ -73,7 +73,7 @@ export default function QuizView({ chapterId, onNavigate }: QuizViewProps) {
         {/* Controls */}
         <div className="flex flex-wrap gap-2 items-center">
           <div className="flex gap-1">
-            {['all', 'ch1', 'ch2', 'ch3'].map(id => {
+            {['all', ...chapters.map(c => c.id)].map(id => {
               const ch = chapters.find(c => c.id === id);
               const count = id === 'all' ? allQuestions.length : allQuestions.filter(q => {
                 const c = chapters.find(cc => cc.id === id);
