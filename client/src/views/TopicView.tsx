@@ -30,8 +30,11 @@ function renderInline(text: string): React.ReactNode {
   });
 }
 
+let _parseMarkdownCallId = 0;
+
 function parseMarkdown(text: string): React.ReactNode {
   // Simple markdown parser for bold, italic, inline code, line breaks, and pipe tables
+  const callId = `pm${_parseMarkdownCallId++}`;
   const lines = text.split('\n');
   const result: React.ReactNode[] = [];
   let i = 0;
@@ -53,7 +56,7 @@ function parseMarkdown(text: string): React.ReactNode {
       const [headerRow, ...bodyRows] = nonSep;
       const headers = parseRow(headerRow);
       result.push(
-        <div key={i} className="overflow-x-auto my-4">
+        <div key={`${callId}-tbl-${i}`} className="overflow-x-auto my-4">
           <table className="w-full text-sm border-collapse" style={{ fontFamily: 'Lora, serif' }}>
             <thead>
               <tr style={{ background: 'oklch(0.72 0.15 65 / 0.15)' }}>
@@ -80,11 +83,11 @@ function parseMarkdown(text: string): React.ReactNode {
       );
       continue;
     }
-    if (line === '') { result.push(<br key={i} />); i++; continue; }
+    if (line === '') { result.push(<br key={`${callId}-br-${i}`} />); i++; continue; }
     const rendered = renderInline(line);
     if (line.startsWith('- ') || line.startsWith('• ')) {
       result.push(
-        <div key={i} className="flex items-start gap-2 my-0.5">
+        <div key={`${callId}-li-${i}`} className="flex items-start gap-2 my-0.5">
           <span style={{ color: 'oklch(0.72 0.15 65)', marginTop: '0.25rem', flexShrink: 0 }}>•</span>
           <span>{rendered}</span>
         </div>
@@ -93,13 +96,13 @@ function parseMarkdown(text: string): React.ReactNode {
       const num = line.match(/^(\d+)\./)?.[1];
       const rest = line.replace(/^\d+\.\s*/, '');
       result.push(
-        <div key={i} className="flex items-start gap-2 my-0.5">
+        <div key={`${callId}-ol-${i}`} className="flex items-start gap-2 my-0.5">
           <span className="flex-shrink-0 w-5 h-5 rounded-full text-xs flex items-center justify-center font-bold" style={{ background: 'oklch(0.72 0.15 65 / 0.2)', color: 'oklch(0.45 0.12 55)' }}>{num}</span>
           <span>{renderInline(rest)}</span>
         </div>
       );
     } else {
-      result.push(<p key={i} className="my-0.5">{rendered}</p>);
+      result.push(<p key={`${callId}-p-${i}`} className="my-0.5">{rendered}</p>);
     }
     i++;
   }
